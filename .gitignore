@@ -31,3 +31,8 @@ temp/
 
 # Claude Code configuration
 everything-claude-code/
+
+# Git tokens and credentials
+Git Token.txt
+*.token
+*token*.txt
