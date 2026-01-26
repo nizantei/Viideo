@@ -1,0 +1,39 @@
+Title: Clip 1                                                                                                                                                                                                      
+Folder: Ratio 3:1
+HLS: https://customer-da4812z845ijzly5.cloudflarestream.com/19209a3a0ff8c65eacb7302bb73e274a/manifest/video.m3u8
+
+Title: Clip 2                                                                                                                                                                                                     
+Folder: Ratio 3:1
+HLS: https://customer-da4812z845ijzly5.cloudflarestream.com/022ea8b1bcdac625474960c261bb101f/manifest/video.m3u8
+
+Title: Clip 3                                                                                                                                                                                                     
+Folder: Ratio 3:1
+HLS: https://customer-da4812z845ijzly5.cloudflarestream.com/195fa9fc137a10fe1b53c8d7e078053b/manifest/video.m3u8
+
+Title: Clip 4                                                                                                                                                                                                     
+Folder: Ratio 4:1
+HLS: https://customer-da4812z845ijzly5.cloudflarestream.com/612b963a737a82987354a8f1094d59c0/manifest/video.m3u8
+
+Title: Clip 5                                                                                                                                                                                                     
+Folder: Ratio 3:1
+HLS: https://customer-da4812z845ijzly5.cloudflarestream.com/8944030da2164d93919cea93c8f3441c/manifest/video.m3u8
+
+Title: Clip 6                                                                                                                                                                                                     
+Folder: Ratio 4:1
+HLS: https://customer-da4812z845ijzly5.cloudflarestream.com/dd562e3354c917cfbfdb1409ef7f6cc8/manifest/video.m3u8
+
+Title: Clip 7                                                                                                                                                                                                     
+Folder: Ratio 3:1
+HLS: https://customer-da4812z845ijzly5.cloudflarestream.com/0059e09f9bc9b54852d6631756654ca3/manifest/video.m3u8
+
+Title: Clip 8                                                                                                                                                                                                     
+Folder: Ratio 3:1
+HLS: https://customer-da4812z845ijzly5.cloudflarestream.com/5063374b84fd19117c586716b39c262c/manifest/video.m3u8
+
+Title: Clip 9                                                                                                                                                                                                     
+Folder: Ratio 3:1
+HLS: https://customer-da4812z845ijzly5.cloudflarestream.com/3271614ed4ba4fa990f972cf9faec503/manifest/video.m3u8
+
+Title: Clip 10                                                                                                                                                                                                     
+Folder: Ratio 3:1
+HLS: https://customer-da4812z845ijzly5.cloudflarestream.com/78d709b309d4b9294143fe96ac83e617/manifest/video.m3u8

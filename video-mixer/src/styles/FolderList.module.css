@@ -1,0 +1,40 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.folder {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.folder:hover {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.folder.selected {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.6;
+}
+
+.folder.selected .icon {
+  opacity: 1;
+}
