@@ -30,7 +30,6 @@ export function DeckLabel({ deck }: DeckLabelProps) {
   }, []);
 
   const startLongPress = () => {
-    console.log('Starting long press for deck', deck);
     isLongPressingRef.current = true;
 
     // Clear any existing interval
@@ -59,13 +58,11 @@ export function DeckLabel({ deck }: DeckLabelProps) {
         newValue = Math.min(targetValue, currentValue + step);
       }
 
-      console.log('Animating:', currentValue, '->', newValue);
       dispatch({ type: 'SET_CROSSFADER', value: newValue });
     }, 16); // ~60fps
   };
 
   const stopLongPress = () => {
-    console.log('Stopping long press, was pressing:', isLongPressingRef.current);
     const wasLongPressing = isLongPressingRef.current;
     isLongPressingRef.current = false;
 
@@ -79,8 +76,6 @@ export function DeckLabel({ deck }: DeckLabelProps) {
 
   const handleTouchStart = (e: React.TouchEvent) => {
     e.stopPropagation();
-    e.preventDefault();
-    console.log('Touch start on deck', deck);
 
     // Clear any existing timer
     if (longPressTimer.current) {
@@ -89,14 +84,12 @@ export function DeckLabel({ deck }: DeckLabelProps) {
 
     // Start long press timer
     longPressTimer.current = window.setTimeout(() => {
-      console.log('Long press timer fired for deck', deck);
       startLongPress();
     }, 500);
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
     e.stopPropagation();
-    console.log('Touch end on deck', deck);
 
     // Clear timer
     if (longPressTimer.current) {
@@ -109,7 +102,6 @@ export function DeckLabel({ deck }: DeckLabelProps) {
 
     // If it was a short tap, open library
     if (!wasLongPress) {
-      console.log('Short tap detected, opening library for deck', deck);
       if (!state.isInteractionEnabled) {
         dispatch({ type: 'ENABLE_INTERACTION' });
       }
