@@ -87,6 +87,62 @@ export const videos: Video[] = [
     hlsUrl: getHlsUrl('78d709b309d4b9294143fe96ac83e617'),
     thumbnailUrl: getThumbnailUrl('78d709b309d4b9294143fe96ac83e617'),
   },
+  {
+    id: 'clip-11',
+    title: 'Clip 11',
+    folder: 'ratio-3-1',
+    hlsUrl: getHlsUrl('996b6a635c2d287796edb65fddb2d048'),
+    thumbnailUrl: getThumbnailUrl('996b6a635c2d287796edb65fddb2d048'),
+  },
+  {
+    id: 'clip-12',
+    title: 'Clip 12',
+    folder: 'ratio-3-1',
+    hlsUrl: getHlsUrl('7596d0f732586ab36a62dfa85370067a'),
+    thumbnailUrl: getThumbnailUrl('7596d0f732586ab36a62dfa85370067a'),
+  },
+  {
+    id: 'clip-13',
+    title: 'Clip 13',
+    folder: 'ratio-3-1',
+    hlsUrl: getHlsUrl('e66d08aa958441fc3645283b122e622e'),
+    thumbnailUrl: getThumbnailUrl('e66d08aa958441fc3645283b122e622e'),
+  },
+  {
+    id: 'clip-14',
+    title: 'Clip 14',
+    folder: 'ratio-4-1',
+    hlsUrl: getHlsUrl('3cedd0701cba67f9c040fe63f5beeb6c'),
+    thumbnailUrl: getThumbnailUrl('3cedd0701cba67f9c040fe63f5beeb6c'),
+  },
+  {
+    id: 'clip-15',
+    title: 'Clip 15',
+    folder: 'ratio-4-1',
+    hlsUrl: getHlsUrl('ab30dee2d0e890ecab05e57f7398b8e8'),
+    thumbnailUrl: getThumbnailUrl('ab30dee2d0e890ecab05e57f7398b8e8'),
+  },
+  {
+    id: 'clip-16',
+    title: 'Clip 16',
+    folder: 'ratio-4-1',
+    hlsUrl: getHlsUrl('3653f341488761cce72df188c58baa1e'),
+    thumbnailUrl: getThumbnailUrl('3653f341488761cce72df188c58baa1e'),
+  },
+  {
+    id: 'clip-17',
+    title: 'Clip 17',
+    folder: 'ratio-3-1',
+    hlsUrl: getHlsUrl('596ff3b1449086b1103bf2edb7935c67'),
+    thumbnailUrl: getThumbnailUrl('596ff3b1449086b1103bf2edb7935c67'),
+  },
+  {
+    id: 'clip-18',
+    title: 'Clip 18',
+    folder: 'ratio-3-1',
+    hlsUrl: getHlsUrl('7437002010a06728ac87c603d6a843ed'),
+    thumbnailUrl: getThumbnailUrl('7437002010a06728ac87c603d6a843ed'),
+  },
 ];
 
 export function getVideoById(id: string): Video | undefined {
