@@ -7,7 +7,6 @@ import { TapToLoad } from './TapToLoad';
 import { Crossfader } from './Crossfader';
 import { LibraryOverlay } from './LibraryOverlay';
 import { PlayButton } from './PlayButton';
-import { FullscreenButton } from './FullscreenButton';
 import styles from '../styles/App.module.css';
 
 export default function App() {
