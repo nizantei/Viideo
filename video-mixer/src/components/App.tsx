@@ -19,6 +19,50 @@ export default function App() {
   // Detect if device is Android
   const isAndroid = /Android/i.test(navigator.userAgent);
 
+  // Try to enter fullscreen on initial load (works on any orientation)
+  useEffect(() => {
+    const enterFullscreenOnLoad = async () => {
+      try {
+        if (!document.fullscreenElement && !(document as any).webkitFullscreenElement) {
+          const elem = document.documentElement as HTMLElement & {
+            webkitRequestFullscreen?: () => Promise<void>;
+            mozRequestFullScreen?: () => Promise<void>;
+            msRequestFullscreen?: () => Promise<void>;
+          };
+
+          if (elem.requestFullscreen) {
+            await elem.requestFullscreen();
+          } else if (elem.webkitRequestFullscreen) {
+            await elem.webkitRequestFullscreen();
+          } else if (elem.mozRequestFullScreen) {
+            await elem.mozRequestFullScreen();
+          } else if (elem.msRequestFullscreen) {
+            await elem.msRequestFullscreen();
+          }
+        }
+      } catch (err) {
+        // Will fail if no user interaction yet
+      }
+    };
+
+    // Set up handler to trigger fullscreen on first user interaction
+    const handleFirstInteraction = () => {
+      enterFullscreenOnLoad();
+    };
+
+    // Try immediately (will likely fail, but worth trying)
+    enterFullscreenOnLoad();
+
+    // Set up listeners for first interaction
+    document.addEventListener('touchstart', handleFirstInteraction, { once: true });
+    document.addEventListener('click', handleFirstInteraction, { once: true });
+
+    return () => {
+      document.removeEventListener('touchstart', handleFirstInteraction);
+      document.removeEventListener('click', handleFirstInteraction);
+    };
+  }, []);
+
   // Auto-fullscreen on Android when landscape is detected
   useEffect(() => {
     if (!isAndroid) return;

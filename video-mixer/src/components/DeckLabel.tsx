@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { useMixer } from '../context/MixerContext';
 import styles from '../styles/DeckLabel.module.css';
 
@@ -11,116 +11,144 @@ export function DeckLabel({ deck }: DeckLabelProps) {
   const deckState = deck === 'A' ? state.deckA : state.deckB;
   const isActive = deckState.videoId !== null;
   const longPressTimer = useRef<number | null>(null);
-  const isLongPressing = useRef(false);
+  const animationFrameRef = useRef<number | null>(null);
+  const isLongPressingRef = useRef(false);
 
   const deckClass = deck === 'A' ? styles.deckA : styles.deckB;
   const activeClass = isActive ? styles.active : styles.inactive;
 
-  // Animation loop for continuous crossfader movement
-  useEffect(() => {
-    if (!isLongPressing.current) return;
-
-    let animationFrameId: number;
-
-    const animate = () => {
-      if (!isLongPressing.current) return;
-
-      const currentValue = state.crossfader;
-      const targetValue = deck === 'A' ? 0 : 1;
-      const step = 0.01; // Reduced speed by half
-
-      let newValue: number;
-      if (deck === 'A') {
-        newValue = Math.max(targetValue, currentValue - step);
-      } else {
-        newValue = Math.min(targetValue, currentValue + step);
+  // Animation function with useCallback to ensure stable reference
+  const animate = useCallback(() => {
+    if (!isLongPressingRef.current) {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
       }
+      return;
+    }
 
-      dispatch({ type: 'SET_CROSSFADER', value: newValue });
+    const currentValue = state.crossfader;
+    const targetValue = deck === 'A' ? 0 : 1;
+    const step = 0.005; // Half speed again (was 0.01, now 0.005)
 
-      // Continue animation
-      if (isLongPressing.current) {
-        animationFrameId = requestAnimationFrame(animate);
-      }
-    };
+    let newValue: number;
+    if (deck === 'A') {
+      newValue = Math.max(targetValue, currentValue - step);
+    } else {
+      newValue = Math.min(targetValue, currentValue + step);
+    }
 
-    animationFrameId = requestAnimationFrame(animate);
+    dispatch({ type: 'SET_CROSSFADER', value: newValue });
 
-    return () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
-    };
-  }, [state.crossfader, deck, dispatch, isLongPressing.current]);
+    // Always continue animation while pressing
+    animationFrameRef.current = requestAnimationFrame(animate);
+  }, [state.crossfader, deck, dispatch]);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (longPressTimer.current) {
         clearTimeout(longPressTimer.current);
+        longPressTimer.current = null;
       }
-      isLongPressing.current = false;
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+      isLongPressingRef.current = false;
     };
   }, []);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
+  const startLongPress = useCallback(() => {
+    isLongPressingRef.current = true;
+    // Start animation loop
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
+    animationFrameRef.current = requestAnimationFrame(animate);
+  }, [animate]);
+
+  const stopLongPress = useCallback(() => {
+    const wasLongPressing = isLongPressingRef.current;
+    isLongPressingRef.current = false;
+
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+
+    return wasLongPressing;
+  }, []);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
     e.stopPropagation();
     e.preventDefault();
 
+    // Clear any existing timer
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+    }
+
     // Start long press timer
     longPressTimer.current = window.setTimeout(() => {
-      isLongPressing.current = true;
-      // Trigger a state update to start the animation loop
-      dispatch({ type: 'SET_CROSSFADER', value: state.crossfader });
+      startLongPress();
     }, 500);
-  };
+  }, [startLongPress]);
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
     e.stopPropagation();
 
+    // Clear timer
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
     }
 
-    // If it was a short tap (not long press), open library
-    if (!isLongPressing.current) {
+    // Check if it was a long press
+    const wasLongPress = stopLongPress();
+
+    // If it was a short tap, open library
+    if (!wasLongPress) {
       if (!state.isInteractionEnabled) {
         dispatch({ type: 'ENABLE_INTERACTION' });
       }
       dispatch({ type: 'OPEN_LIBRARY', targetDeck: deck });
     }
+  }, [stopLongPress, state.isInteractionEnabled, dispatch, deck]);
 
-    isLongPressing.current = false;
-  };
+  const handleMouseDown = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+    }
 
-  const handleMouseDown = () => {
     longPressTimer.current = window.setTimeout(() => {
-      isLongPressing.current = true;
-      dispatch({ type: 'SET_CROSSFADER', value: state.crossfader });
+      startLongPress();
     }, 500);
-  };
+  }, [startLongPress]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
     }
 
-    if (!isLongPressing.current) {
+    const wasLongPress = stopLongPress();
+
+    if (!wasLongPress) {
       if (!state.isInteractionEnabled) {
         dispatch({ type: 'ENABLE_INTERACTION' });
       }
       dispatch({ type: 'OPEN_LIBRARY', targetDeck: deck });
     }
+  }, [stopLongPress, state.isInteractionEnabled, dispatch, deck]);
 
-    isLongPressing.current = false;
-  };
-
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
     }
-    isLongPressing.current = false;
-  };
+    stopLongPress();
+  }, [stopLongPress]);
 
   return (
     <button
