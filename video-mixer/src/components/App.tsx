@@ -18,11 +18,10 @@ export default function App() {
 
   // Detect if device is Android
   const isAndroid = /Android/i.test(navigator.userAgent);
-  const fullscreenAttempted = useRef(false);
 
   // Auto-fullscreen on Android when landscape is detected
   useEffect(() => {
-    if (!isAndroid || !isLandscape) return;
+    if (!isAndroid) return;
 
     const enterFullscreen = async () => {
       try {
@@ -49,31 +48,48 @@ export default function App() {
       }
     };
 
-    // Set up interaction handler to trigger fullscreen on first touch/click
+    // Listen for orientation changes to trigger fullscreen
+    const handleOrientationChange = () => {
+      // Small delay to let orientation settle
+      setTimeout(() => {
+        if (window.innerWidth > window.innerHeight) {
+          enterFullscreen();
+        }
+      }, 100);
+    };
+
+    // Listen for screen orientation changes
+    if (window.screen?.orientation) {
+      window.screen.orientation.addEventListener('change', handleOrientationChange);
+    }
+
+    // Also listen for window orientation change (fallback)
+    window.addEventListener('orientationchange', handleOrientationChange);
+
+    // Set up universal interaction handler to trigger fullscreen
     const handleInteraction = () => {
-      if (!fullscreenAttempted.current) {
-        fullscreenAttempted.current = true;
+      if (window.innerWidth > window.innerHeight) {
         enterFullscreen();
       }
     };
 
-    // Try immediately (might fail if no user interaction yet)
-    enterFullscreen();
+    // Try on any user interaction
+    document.addEventListener('touchstart', handleInteraction);
+    document.addEventListener('touchend', handleInteraction);
+    document.addEventListener('click', handleInteraction);
 
-    // Also try on any user interaction
-    document.addEventListener('touchstart', handleInteraction, { once: true });
-    document.addEventListener('click', handleInteraction, { once: true });
-
-    // Set up interval to keep checking and re-entering if needed
-    const fullscreenInterval = setInterval(() => {
-      if (isLandscape && !document.fullscreenElement && !(document as any).webkitFullscreenElement) {
-        enterFullscreen();
-      }
-    }, 1000);
+    // Try immediately when landscape is detected
+    if (isLandscape) {
+      enterFullscreen();
+    }
 
     return () => {
-      clearInterval(fullscreenInterval);
+      if (window.screen?.orientation) {
+        window.screen.orientation.removeEventListener('change', handleOrientationChange);
+      }
+      window.removeEventListener('orientationchange', handleOrientationChange);
       document.removeEventListener('touchstart', handleInteraction);
+      document.removeEventListener('touchend', handleInteraction);
       document.removeEventListener('click', handleInteraction);
     };
   }, [isLandscape, isAndroid]);

@@ -27,7 +27,7 @@ export function DeckLabel({ deck }: DeckLabelProps) {
 
       const currentValue = state.crossfader;
       const targetValue = deck === 'A' ? 0 : 1;
-      const step = 0.02;
+      const step = 0.01; // Reduced speed by half
 
       let newValue: number;
       if (deck === 'A') {
