@@ -11,11 +11,47 @@ export function DeckLabel({ deck }: DeckLabelProps) {
   const deckState = deck === 'A' ? state.deckA : state.deckB;
   const isActive = deckState.videoId !== null;
   const longPressTimer = useRef<number | null>(null);
-  const animationFrame = useRef<number | null>(null);
   const isLongPressing = useRef(false);
 
   const deckClass = deck === 'A' ? styles.deckA : styles.deckB;
   const activeClass = isActive ? styles.active : styles.inactive;
+
+  // Animation loop for continuous crossfader movement
+  useEffect(() => {
+    if (!isLongPressing.current) return;
+
+    let animationFrameId: number;
+
+    const animate = () => {
+      if (!isLongPressing.current) return;
+
+      const currentValue = state.crossfader;
+      const targetValue = deck === 'A' ? 0 : 1;
+      const step = 0.02;
+
+      let newValue: number;
+      if (deck === 'A') {
+        newValue = Math.max(targetValue, currentValue - step);
+      } else {
+        newValue = Math.min(targetValue, currentValue + step);
+      }
+
+      dispatch({ type: 'SET_CROSSFADER', value: newValue });
+
+      // Continue animation
+      if (isLongPressing.current) {
+        animationFrameId = requestAnimationFrame(animate);
+      }
+    };
+
+    animationFrameId = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
+  }, [state.crossfader, deck, dispatch, isLongPressing.current]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -23,42 +59,20 @@ export function DeckLabel({ deck }: DeckLabelProps) {
       if (longPressTimer.current) {
         clearTimeout(longPressTimer.current);
       }
-      if (animationFrame.current) {
-        cancelAnimationFrame(animationFrame.current);
-      }
+      isLongPressing.current = false;
     };
   }, []);
 
-  const moveCrossfader = () => {
-    if (!isLongPressing.current) return;
-
-    const currentValue = state.crossfader;
-    const targetValue = deck === 'A' ? 0 : 1;
-    const step = 0.02; // Speed of movement (increased for smoother visible motion)
-
-    let newValue: number;
-    if (deck === 'A') {
-      newValue = Math.max(targetValue, currentValue - step);
-    } else {
-      newValue = Math.min(targetValue, currentValue + step);
-    }
-
-    dispatch({ type: 'SET_CROSSFADER', value: newValue });
-
-    // Continue animation while still pressing (always call requestAnimationFrame)
-    if (isLongPressing.current) {
-      animationFrame.current = requestAnimationFrame(moveCrossfader);
-    }
-  };
-
   const handleTouchStart = (e: React.TouchEvent) => {
     e.stopPropagation();
+    e.preventDefault();
 
     // Start long press timer
     longPressTimer.current = window.setTimeout(() => {
       isLongPressing.current = true;
-      moveCrossfader();
-    }, 500); // 500ms threshold for long press
+      // Trigger a state update to start the animation loop
+      dispatch({ type: 'SET_CROSSFADER', value: state.crossfader });
+    }, 500);
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
@@ -66,10 +80,6 @@ export function DeckLabel({ deck }: DeckLabelProps) {
 
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
-    }
-
-    if (animationFrame.current) {
-      cancelAnimationFrame(animationFrame.current);
     }
 
     // If it was a short tap (not long press), open library
@@ -86,17 +96,13 @@ export function DeckLabel({ deck }: DeckLabelProps) {
   const handleMouseDown = () => {
     longPressTimer.current = window.setTimeout(() => {
       isLongPressing.current = true;
-      moveCrossfader();
+      dispatch({ type: 'SET_CROSSFADER', value: state.crossfader });
     }, 500);
   };
 
   const handleMouseUp = () => {
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
-    }
-
-    if (animationFrame.current) {
-      cancelAnimationFrame(animationFrame.current);
     }
 
     if (!isLongPressing.current) {
@@ -113,11 +119,6 @@ export function DeckLabel({ deck }: DeckLabelProps) {
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
     }
-
-    if (animationFrame.current) {
-      cancelAnimationFrame(animationFrame.current);
-    }
-
     isLongPressing.current = false;
   };
 
@@ -126,6 +127,7 @@ export function DeckLabel({ deck }: DeckLabelProps) {
       className={`${styles.label} ${deckClass} ${activeClass}`}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}

@@ -18,6 +18,7 @@ export default function App() {
 
   // Detect if device is Android
   const isAndroid = /Android/i.test(navigator.userAgent);
+  const fullscreenAttempted = useRef(false);
 
   // Auto-fullscreen on Android when landscape is detected
   useEffect(() => {
@@ -29,36 +30,51 @@ export default function App() {
         if (!document.fullscreenElement && !(document as any).webkitFullscreenElement) {
           const elem = document.documentElement as HTMLElement & {
             webkitRequestFullscreen?: () => Promise<void>;
+            mozRequestFullScreen?: () => Promise<void>;
+            msRequestFullscreen?: () => Promise<void>;
           };
 
           if (elem.requestFullscreen) {
             await elem.requestFullscreen();
           } else if (elem.webkitRequestFullscreen) {
             await elem.webkitRequestFullscreen();
+          } else if (elem.mozRequestFullScreen) {
+            await elem.mozRequestFullScreen();
+          } else if (elem.msRequestFullscreen) {
+            await elem.msRequestFullscreen();
           }
         }
       } catch (err) {
-        console.log('Auto-fullscreen error:', err);
+        // Silently fail
       }
     };
 
-    // Try to enter fullscreen immediately
+    // Set up interaction handler to trigger fullscreen on first touch/click
+    const handleInteraction = () => {
+      if (!fullscreenAttempted.current) {
+        fullscreenAttempted.current = true;
+        enterFullscreen();
+      }
+    };
+
+    // Try immediately (might fail if no user interaction yet)
     enterFullscreen();
 
-    // Also set up a listener to re-enter fullscreen if user exits
-    const handleFullscreenChange = () => {
-      if (isLandscape && !document.fullscreenElement && !(document as any).webkitFullscreenElement) {
-        // Small delay before retrying
-        setTimeout(enterFullscreen, 500);
-      }
-    };
+    // Also try on any user interaction
+    document.addEventListener('touchstart', handleInteraction, { once: true });
+    document.addEventListener('click', handleInteraction, { once: true });
 
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    // Set up interval to keep checking and re-entering if needed
+    const fullscreenInterval = setInterval(() => {
+      if (isLandscape && !document.fullscreenElement && !(document as any).webkitFullscreenElement) {
+        enterFullscreen();
+      }
+    }, 1000);
 
     return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      clearInterval(fullscreenInterval);
+      document.removeEventListener('touchstart', handleInteraction);
+      document.removeEventListener('click', handleInteraction);
     };
   }, [isLandscape, isAndroid]);
 
