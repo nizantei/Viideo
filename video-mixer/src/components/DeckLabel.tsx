@@ -13,6 +13,7 @@ export function DeckLabel({ deck }: DeckLabelProps) {
   const longPressTimer = useRef<number | null>(null);
   const isLongPressingRef = useRef(false);
   const animationFrameRef = useRef<number | null>(null);
+  const touchStartTime = useRef<number>(0);
 
   // Ref to store latest crossfader value (fixes stale closure)
   const crossfaderRef = useRef(state.crossfader);
@@ -119,6 +120,9 @@ export function DeckLabel({ deck }: DeckLabelProps) {
   const handleTouchStart = (e: React.TouchEvent) => {
     e.stopPropagation();
 
+    // Record start time for duration calculation
+    touchStartTime.current = Date.now();
+
     // Clear any existing timer
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
@@ -133,17 +137,21 @@ export function DeckLabel({ deck }: DeckLabelProps) {
   const handleTouchEnd = (e: React.TouchEvent) => {
     e.stopPropagation();
 
+    // Calculate actual touch duration
+    const touchDuration = Date.now() - touchStartTime.current;
+
     // Clear timer
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
     }
 
-    // Check if it was a long press
-    const wasLongPress = stopLongPress();
+    // Stop any animation
+    stopLongPress();
 
-    // If it was a short tap, open library
-    if (!wasLongPress) {
+    // Use actual duration to determine if it was a short tap
+    // Use 400ms threshold to be more lenient than the 500ms timer
+    if (touchDuration < 400) {
       if (!state.isInteractionEnabled) {
         dispatch({ type: 'ENABLE_INTERACTION' });
       }
@@ -152,6 +160,9 @@ export function DeckLabel({ deck }: DeckLabelProps) {
   };
 
   const handleMouseDown = () => {
+    // Record start time for duration calculation
+    touchStartTime.current = Date.now();
+
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
     }
@@ -162,14 +173,19 @@ export function DeckLabel({ deck }: DeckLabelProps) {
   };
 
   const handleMouseUp = () => {
+    // Calculate actual duration
+    const touchDuration = Date.now() - touchStartTime.current;
+
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
     }
 
-    const wasLongPress = stopLongPress();
+    // Stop any animation
+    stopLongPress();
 
-    if (!wasLongPress) {
+    // Use actual duration to determine if it was a short click
+    if (touchDuration < 400) {
       if (!state.isInteractionEnabled) {
         dispatch({ type: 'ENABLE_INTERACTION' });
       }
