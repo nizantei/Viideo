@@ -17,8 +17,9 @@ export function DeckLabel({ deck }: DeckLabelProps) {
   const deckClass = deck === 'A' ? styles.deckA : styles.deckB;
   const activeClass = isActive ? styles.active : styles.inactive;
 
-  // Animation function with useCallback to ensure stable reference
-  const animate = useCallback(() => {
+  // Animation function - NOT using useCallback to avoid closure issues
+  // The function needs to always read the latest state value
+  const animate = () => {
     if (!isLongPressingRef.current) {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
@@ -42,7 +43,7 @@ export function DeckLabel({ deck }: DeckLabelProps) {
 
     // Always continue animation while pressing
     animationFrameRef.current = requestAnimationFrame(animate);
-  }, [state.crossfader, deck, dispatch]);
+  };
 
   // Cleanup on unmount
   useEffect(() => {
@@ -59,14 +60,14 @@ export function DeckLabel({ deck }: DeckLabelProps) {
     };
   }, []);
 
-  const startLongPress = useCallback(() => {
+  const startLongPress = () => {
     isLongPressingRef.current = true;
     // Start animation loop
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
     }
     animationFrameRef.current = requestAnimationFrame(animate);
-  }, [animate]);
+  };
 
   const stopLongPress = useCallback(() => {
     const wasLongPressing = isLongPressingRef.current;

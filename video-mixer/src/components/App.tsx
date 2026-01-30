@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { useMixer } from '../context/MixerContext';
 import { useLandscapeLock } from '../hooks/useLandscapeLock';
 import { VideoCanvas, VideoCanvasRef } from './VideoCanvas';
@@ -6,7 +6,6 @@ import { DeckLabel } from './DeckLabel';
 import { TapToLoad } from './TapToLoad';
 import { Crossfader } from './Crossfader';
 import { LibraryOverlay } from './LibraryOverlay';
-import { PlayButton } from './PlayButton';
 import styles from '../styles/App.module.css';
 
 export default function App() {
@@ -14,7 +13,6 @@ export default function App() {
   const { isLandscape } = useLandscapeLock();
   const containerRef = useRef<HTMLDivElement>(null);
   const videoCanvasRef = useRef<VideoCanvasRef>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   // Detect if device is Android
   const isAndroid = /Android/i.test(navigator.userAgent);
@@ -142,39 +140,19 @@ export default function App() {
   useEffect(() => {
     if (state.isInteractionEnabled && videoCanvasRef.current) {
       videoCanvasRef.current.play();
-      setIsPlaying(true);
     }
   }, [state.isInteractionEnabled, state.deckA.videoId, state.deckB.videoId]);
 
-  const handlePlayPause = useCallback(() => {
-    if (!state.isInteractionEnabled) {
-      dispatch({ type: 'ENABLE_INTERACTION' });
-    }
-
-    if (videoCanvasRef.current) {
-      if (isPlaying) {
-        videoCanvasRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        videoCanvasRef.current.play();
-        setIsPlaying(true);
-      }
-    }
-  }, [isPlaying, state.isInteractionEnabled, dispatch]);
-
-  // Handle tap on video area
-  const handleVideoAreaTap = useCallback(() => {
+  // Handle tap on video area - enable interaction and auto-play
+  const handleVideoAreaTap = () => {
     if (!state.isInteractionEnabled) {
       dispatch({ type: 'ENABLE_INTERACTION' });
       // Auto-play on first interaction
       if (videoCanvasRef.current) {
         videoCanvasRef.current.play();
-        setIsPlaying(true);
       }
     }
-  }, [state.isInteractionEnabled, dispatch]);
-
-  const hasVideos = state.deckA.videoId || state.deckB.videoId;
+  };
 
   // Show rotate device overlay on portrait
   if (!isLandscape) {
@@ -207,10 +185,7 @@ export default function App() {
         <DeckLabel deck="B" />
         <TapToLoad />
         <Crossfader />
-        {/* Fullscreen button removed - auto-fullscreen on Android landscape */}
-        {hasVideos && (
-          <PlayButton isPlaying={isPlaying} onToggle={handlePlayPause} />
-        )}
+        {/* Fullscreen and play/pause buttons removed */}
       </div>
 
       {/* Library modal */}
