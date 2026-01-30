@@ -52,24 +52,26 @@ body {
   --safe-area-inset-right: env(safe-area-inset-right, 0px);
 }
 
-/* iOS fullscreen mode - maximize viewport */
+/* iOS fullscreen mode - maximize viewport and hide address bar */
 body.ios-fullscreen {
   position: fixed;
-  top: 0;
+  top: -100px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: calc(100vh + 100px);
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+body.ios-fullscreen #root {
+  position: fixed;
+  top: 100px;
   left: 0;
   right: 0;
   bottom: 0;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-}
-
-body.ios-fullscreen #root {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 100vh;
 }

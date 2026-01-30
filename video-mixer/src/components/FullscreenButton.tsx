@@ -29,11 +29,21 @@ export function FullscreenButton() {
     // iOS Safari workaround - scroll to hide address bar
     if (isIOSDevice) {
       if (!isFullscreen) {
-        // Scroll to top to hide Safari UI
-        window.scrollTo(0, 1);
-
         // Add fullscreen class to body for CSS-based fullscreen
         document.body.classList.add('ios-fullscreen');
+
+        // Force a reflow
+        document.body.offsetHeight;
+
+        // Multiple scroll attempts to ensure address bar hides
+        const hideAddressBar = () => {
+          window.scrollTo(0, 100);
+          setTimeout(() => window.scrollTo(0, 100), 0);
+          setTimeout(() => window.scrollTo(0, 100), 100);
+          setTimeout(() => window.scrollTo(0, 100), 300);
+        };
+
+        hideAddressBar();
         setIsFullscreen(true);
 
         // Request screen orientation lock if available
@@ -47,6 +57,7 @@ export function FullscreenButton() {
         }
       } else {
         document.body.classList.remove('ios-fullscreen');
+        window.scrollTo(0, 0);
         setIsFullscreen(false);
 
         // Unlock orientation
