@@ -29,7 +29,7 @@
 }
 
 .deckA {
-  left: 16px;
+  left: 18%;
   color: var(--color-deck-a);
   border-color: rgba(0, 212, 255, 0.4);
 }
@@ -43,7 +43,7 @@
 }
 
 .deckB {
-  right: 16px;
+  right: 18%;
   color: var(--color-deck-b);
   border-color: rgba(255, 68, 102, 0.4);
 }

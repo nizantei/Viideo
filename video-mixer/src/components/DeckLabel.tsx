@@ -34,7 +34,7 @@ export function DeckLabel({ deck }: DeckLabelProps) {
 
     const currentValue = state.crossfader;
     const targetValue = deck === 'A' ? 0 : 1;
-    const step = 0.015; // Speed of movement
+    const step = 0.02; // Speed of movement (increased for smoother visible motion)
 
     let newValue: number;
     if (deck === 'A') {
@@ -45,8 +45,8 @@ export function DeckLabel({ deck }: DeckLabelProps) {
 
     dispatch({ type: 'SET_CROSSFADER', value: newValue });
 
-    // Continue animation if still pressing and not at target
-    if (isLongPressing.current && newValue !== targetValue) {
+    // Continue animation while still pressing (always call requestAnimationFrame)
+    if (isLongPressing.current) {
       animationFrame.current = requestAnimationFrame(moveCrossfader);
     }
   };

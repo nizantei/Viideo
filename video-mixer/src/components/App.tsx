@@ -22,30 +22,45 @@ export default function App() {
 
   // Auto-fullscreen on Android when landscape is detected
   useEffect(() => {
-    if (isAndroid && isLandscape && !hasTriggeredFullscreen.current) {
-      hasTriggeredFullscreen.current = true;
+    if (!isAndroid || !isLandscape) return;
 
-      const enterFullscreen = async () => {
-        try {
-          if (!document.fullscreenElement) {
-            const elem = document.documentElement as HTMLElement & {
-              webkitRequestFullscreen?: () => Promise<void>;
-            };
+    const enterFullscreen = async () => {
+      try {
+        // Check if not already in fullscreen
+        if (!document.fullscreenElement && !(document as any).webkitFullscreenElement) {
+          const elem = document.documentElement as HTMLElement & {
+            webkitRequestFullscreen?: () => Promise<void>;
+          };
 
-            if (elem.requestFullscreen) {
-              await elem.requestFullscreen();
-            } else if (elem.webkitRequestFullscreen) {
-              await elem.webkitRequestFullscreen();
-            }
+          if (elem.requestFullscreen) {
+            await elem.requestFullscreen();
+          } else if (elem.webkitRequestFullscreen) {
+            await elem.webkitRequestFullscreen();
           }
-        } catch (err) {
-          console.log('Auto-fullscreen not available:', err);
         }
-      };
+      } catch (err) {
+        console.log('Auto-fullscreen error:', err);
+      }
+    };
 
-      // Small delay to ensure landscape is stable
-      setTimeout(enterFullscreen, 100);
-    }
+    // Try to enter fullscreen immediately
+    enterFullscreen();
+
+    // Also set up a listener to re-enter fullscreen if user exits
+    const handleFullscreenChange = () => {
+      if (isLandscape && !document.fullscreenElement && !(document as any).webkitFullscreenElement) {
+        // Small delay before retrying
+        setTimeout(enterFullscreen, 500);
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+    };
   }, [isLandscape, isAndroid]);
 
   // Auto-play when videos are loaded and interaction is enabled
