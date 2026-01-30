@@ -12,10 +12,26 @@ export function DeckLabel({ deck }: DeckLabelProps) {
   const isActive = deckState.videoId !== null;
   const longPressTimer = useRef<number | null>(null);
   const isLongPressingRef = useRef(false);
-  const intervalRef = useRef<number | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+
+  // Ref to store latest crossfader value (fixes stale closure)
+  const crossfaderRef = useRef(state.crossfader);
+
+  // Verification system to confirm animation actually moves slider
+  const verifyAnimationWorking = useRef({
+    startValue: 0,
+    startTime: 0,
+    frameCount: 0,
+    working: false
+  });
 
   const deckClass = deck === 'A' ? styles.deckA : styles.deckB;
   const activeClass = isActive ? styles.active : styles.inactive;
+
+  // Update crossfaderRef on every render
+  useEffect(() => {
+    crossfaderRef.current = state.crossfader;
+  }, [state.crossfader]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -23,31 +39,52 @@ export function DeckLabel({ deck }: DeckLabelProps) {
       if (longPressTimer.current) {
         clearTimeout(longPressTimer.current);
       }
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
       }
+      isLongPressingRef.current = false;
     };
   }, []);
 
   const startLongPress = () => {
     isLongPressingRef.current = true;
 
-    // Clear any existing interval
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
+    // Initialize verification
+    verifyAnimationWorking.current = {
+      startValue: crossfaderRef.current,
+      startTime: Date.now(),
+      frameCount: 0,
+      working: false
+    };
 
-    // Use setInterval for consistent animation
-    intervalRef.current = window.setInterval(() => {
+    const animate = () => {
       if (!isLongPressingRef.current) {
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
+        // Check if animation actually worked
+        const verify = verifyAnimationWorking.current;
+        const valueMoved = Math.abs(crossfaderRef.current - verify.startValue);
+        const timeElapsed = Date.now() - verify.startTime;
+
+        if (verify.frameCount > 10 && valueMoved < 0.01) {
+          console.error('❌ ANIMATION FAILED: Slider did not move', {
+            frames: verify.frameCount,
+            timeMs: timeElapsed,
+            expectedMove: verify.frameCount * 0.005,
+            actualMove: valueMoved
+          });
+        } else if (valueMoved > 0) {
+          console.log('✅ Animation verified:', {
+            frames: verify.frameCount,
+            moved: valueMoved,
+            timeMs: timeElapsed
+          });
         }
+
+        animationFrameRef.current = null;
         return;
       }
 
-      const currentValue = state.crossfader;
+      // Read from REF instead of captured state
+      const currentValue = crossfaderRef.current;
       const targetValue = deck === 'A' ? 0 : 1;
       const step = 0.005;
 
@@ -59,16 +96,21 @@ export function DeckLabel({ deck }: DeckLabelProps) {
       }
 
       dispatch({ type: 'SET_CROSSFADER', value: newValue });
-    }, 16); // ~60fps
+
+      verifyAnimationWorking.current.frameCount++;
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    animationFrameRef.current = requestAnimationFrame(animate);
   };
 
   const stopLongPress = () => {
     const wasLongPressing = isLongPressingRef.current;
     isLongPressingRef.current = false;
 
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
     }
 
     return wasLongPressing;
