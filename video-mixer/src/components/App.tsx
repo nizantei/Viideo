@@ -15,7 +15,6 @@ export default function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoCanvasRef = useRef<VideoCanvasRef>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const hasTriggeredFullscreen = useRef(false);
 
   // Detect if device is Android
   const isAndroid = /Android/i.test(navigator.userAgent);
