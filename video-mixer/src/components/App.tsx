@@ -16,6 +16,38 @@ export default function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoCanvasRef = useRef<VideoCanvasRef>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const hasTriggeredFullscreen = useRef(false);
+
+  // Detect if device is Android
+  const isAndroid = /Android/i.test(navigator.userAgent);
+
+  // Auto-fullscreen on Android when landscape is detected
+  useEffect(() => {
+    if (isAndroid && isLandscape && !hasTriggeredFullscreen.current) {
+      hasTriggeredFullscreen.current = true;
+
+      const enterFullscreen = async () => {
+        try {
+          if (!document.fullscreenElement) {
+            const elem = document.documentElement as HTMLElement & {
+              webkitRequestFullscreen?: () => Promise<void>;
+            };
+
+            if (elem.requestFullscreen) {
+              await elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) {
+              await elem.webkitRequestFullscreen();
+            }
+          }
+        } catch (err) {
+          console.log('Auto-fullscreen not available:', err);
+        }
+      };
+
+      // Small delay to ensure landscape is stable
+      setTimeout(enterFullscreen, 100);
+    }
+  }, [isLandscape, isAndroid]);
 
   // Auto-play when videos are loaded and interaction is enabled
   useEffect(() => {
@@ -86,7 +118,7 @@ export default function App() {
         <DeckLabel deck="B" />
         <TapToLoad />
         <Crossfader />
-        <FullscreenButton />
+        {/* Fullscreen button removed - auto-fullscreen on Android landscape */}
         {hasVideos && (
           <PlayButton isPlaying={isPlaying} onToggle={handlePlayPause} />
         )}
