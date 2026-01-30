@@ -55,8 +55,8 @@
 .thumb {
   position: absolute;
   top: 50%;
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   transform: translate(-50%, -50%);
   background: #ffffff;
   border-radius: 50%;
@@ -66,9 +66,21 @@
   transition: transform 0.1s ease;
 }
 
+/* Larger invisible touch area */
+.thumb::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
 .thumb:active {
   cursor: grabbing;
-  transform: translate(-50%, -50%) scale(1.1);
+  transform: translate(-50%, -50%) scale(1.2);
 }
 
 .labels {
