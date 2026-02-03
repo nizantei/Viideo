@@ -1,8 +1,8 @@
 import { useRef, useEffect } from 'react';
 import { useMixer } from '../context/MixerContext';
 import { useLandscapeLock } from '../hooks/useLandscapeLock';
-import { VideoCanvas, VideoCanvasRef } from './VideoCanvas';
-import { DeckLabel } from './DeckLabel';
+import { VideoMixer } from './VideoMixer';
+import { MiniControls } from './MiniControls';
 import { TapToLoad } from './TapToLoad';
 import { Crossfader } from './Crossfader';
 import { LibraryOverlay } from './LibraryOverlay';
@@ -12,7 +12,6 @@ export default function App() {
   const { state, dispatch } = useMixer();
   const { isLandscape } = useLandscapeLock();
   const containerRef = useRef<HTMLDivElement>(null);
-  const videoCanvasRef = useRef<VideoCanvasRef>(null);
 
   // Detect if device is Android
   const isAndroid = /Android/i.test(navigator.userAgent);
@@ -136,21 +135,10 @@ export default function App() {
     };
   }, [isLandscape, isAndroid]);
 
-  // Auto-play when videos are loaded and interaction is enabled
-  useEffect(() => {
-    if (state.isInteractionEnabled && videoCanvasRef.current) {
-      videoCanvasRef.current.play();
-    }
-  }, [state.isInteractionEnabled, state.deckA.videoId, state.deckB.videoId]);
-
   // Handle tap on video area - enable interaction and auto-play
   const handleVideoAreaTap = () => {
     if (!state.isInteractionEnabled) {
       dispatch({ type: 'ENABLE_INTERACTION' });
-      // Auto-play on first interaction
-      if (videoCanvasRef.current) {
-        videoCanvasRef.current.play();
-      }
     }
   };
 
@@ -174,18 +162,16 @@ export default function App() {
       className={styles.container}
       onClick={handleVideoAreaTap}
     >
-      {/* Video canvas (WebGL) */}
+      {/* Video mixer */}
       <div className={styles.canvas}>
-        <VideoCanvas ref={videoCanvasRef} />
+        <VideoMixer />
       </div>
 
       {/* UI Controls overlay */}
       <div className={styles.controls}>
-        <DeckLabel deck="A" />
-        <DeckLabel deck="B" />
+        <MiniControls />
         <TapToLoad />
         <Crossfader />
-        {/* Fullscreen and play/pause buttons removed */}
       </div>
 
       {/* Library modal */}

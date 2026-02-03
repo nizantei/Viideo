@@ -4,8 +4,9 @@ import styles from '../styles/TapToLoad.module.css';
 export function TapToLoad() {
   const { state, dispatch } = useMixer();
 
-  // Don't show if both decks have videos or library is open
-  if ((state.deckA.videoId && state.deckB.videoId) || state.library.isOpen) {
+  // Don't show if all minis have videos or library is open
+  const allMinisLoaded = state.minis.every(mini => mini.videoId !== null);
+  if (allMinisLoaded || state.library.isOpen) {
     return null;
   }
 
@@ -15,19 +16,19 @@ export function TapToLoad() {
       dispatch({ type: 'ENABLE_INTERACTION' });
     }
 
-    // Determine which deck to load
-    const targetDeck: 'A' | 'B' = state.deckA.videoId ? 'B' : 'A';
-    dispatch({ type: 'OPEN_LIBRARY', targetDeck });
+    // Find first empty mini
+    const targetMini = state.minis.findIndex(mini => mini.videoId === null);
+    if (targetMini !== -1) {
+      dispatch({ type: 'OPEN_LIBRARY', targetMini: targetMini as 0 | 1 | 2 | 3 });
+    }
   };
 
   const getMessage = () => {
-    if (!state.deckA.videoId && !state.deckB.videoId) {
+    const loadedCount = state.minis.filter(mini => mini.videoId !== null).length;
+    if (loadedCount === 0) {
       return 'Tap to load your first video';
     }
-    if (state.deckA.videoId && !state.deckB.videoId) {
-      return 'Load a second video to mix';
-    }
-    return 'Tap to load';
+    return `Load video ${loadedCount + 1} of 4`;
   };
 
   return (

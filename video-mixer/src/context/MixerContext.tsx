@@ -1,15 +1,42 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { MixerState, MixerAction } from '../types';
+import { MixerState, MixerAction, MiniState } from '../types';
+import { calculateGroupOpacity } from '../utils/opacity';
 
-const initialState: MixerState = {
-  deckA: { videoId: null, isPlaying: false, isLoading: false },
-  deckB: { videoId: null, isPlaying: false, isLoading: false },
-  crossfader: 0.5,
+const initialMiniState: MiniState = {
+  videoId: null,
+  isPlaying: false,
+  isLoading: false,
+  opacity: 1.0,
   zoom: 1.0,
   panX: 0,
+  panY: 0,
+  swinging: {
+    enabled: false,
+    speed: 20,
+    position: 0,
+    isPaused: false,
+  },
+};
+
+const initialState: MixerState = {
+  minis: [
+    { ...initialMiniState },
+    { ...initialMiniState },
+    { ...initialMiniState },
+    { ...initialMiniState },
+  ],
+  groups: {
+    left: { opacity: 0.5 },
+    right: { opacity: 0.5 },
+  },
+  crossfader: 0.5,
+  editMode: {
+    active: false,
+    targetMini: null,
+  },
   library: {
     isOpen: false,
-    targetDeck: null,
+    targetMini: null,
     selectedFolder: 'all',
   },
   isInteractionEnabled: false,
@@ -17,50 +44,157 @@ const initialState: MixerState = {
 
 function mixerReducer(state: MixerState, action: MixerAction): MixerState {
   switch (action.type) {
-    case 'SET_DECK_VIDEO': {
-      const deckKey = action.deck === 'A' ? 'deckA' : 'deckB';
+    case 'SET_MINI_VIDEO': {
+      const newMinis = [...state.minis] as typeof state.minis;
+      newMinis[action.miniIndex] = {
+        ...newMinis[action.miniIndex],
+        videoId: action.videoId,
+        isPlaying: true,
+      };
+      return { ...state, minis: newMinis };
+    }
+
+    case 'SET_MINI_PLAYING': {
+      const newMinis = [...state.minis] as typeof state.minis;
+      newMinis[action.miniIndex] = {
+        ...newMinis[action.miniIndex],
+        isPlaying: action.isPlaying,
+      };
+      return { ...state, minis: newMinis };
+    }
+
+    case 'SET_MINI_LOADING': {
+      const newMinis = [...state.minis] as typeof state.minis;
+      newMinis[action.miniIndex] = {
+        ...newMinis[action.miniIndex],
+        isLoading: action.isLoading,
+      };
+      return { ...state, minis: newMinis };
+    }
+
+    case 'SET_MINI_OPACITY': {
+      const newMinis = [...state.minis] as typeof state.minis;
+      newMinis[action.miniIndex] = {
+        ...newMinis[action.miniIndex],
+        opacity: action.opacity,
+      };
+      return { ...state, minis: newMinis };
+    }
+
+    case 'SET_MINI_ZOOM': {
+      const newMinis = [...state.minis] as typeof state.minis;
+      newMinis[action.miniIndex] = {
+        ...newMinis[action.miniIndex],
+        zoom: action.zoom,
+      };
+      return { ...state, minis: newMinis };
+    }
+
+    case 'SET_MINI_PAN': {
+      const newMinis = [...state.minis] as typeof state.minis;
+      newMinis[action.miniIndex] = {
+        ...newMinis[action.miniIndex],
+        panX: action.panX,
+        panY: action.panY,
+      };
+      return { ...state, minis: newMinis };
+    }
+
+    case 'UPDATE_MINI_SWINGING': {
+      const newMinis = [...state.minis] as typeof state.minis;
+      newMinis[action.miniIndex] = {
+        ...newMinis[action.miniIndex],
+        swinging: {
+          ...newMinis[action.miniIndex].swinging,
+          ...action.swinging,
+        },
+      };
+      return { ...state, minis: newMinis };
+    }
+
+    case 'ENTER_EDIT_MODE': {
       return {
         ...state,
-        [deckKey]: { ...state[deckKey], videoId: action.videoId },
+        editMode: {
+          active: true,
+          targetMini: action.miniIndex,
+        },
       };
     }
-    case 'SET_DECK_PLAYING': {
-      const deckKey = action.deck === 'A' ? 'deckA' : 'deckB';
+
+    case 'EXIT_EDIT_MODE': {
       return {
         ...state,
-        [deckKey]: { ...state[deckKey], isPlaying: action.isPlaying },
+        editMode: {
+          active: false,
+          targetMini: null,
+        },
       };
     }
-    case 'SET_DECK_LOADING': {
-      const deckKey = action.deck === 'A' ? 'deckA' : 'deckB';
+
+    case 'SWITCH_EDIT_TARGET': {
       return {
         ...state,
-        [deckKey]: { ...state[deckKey], isLoading: action.isLoading },
+        editMode: {
+          ...state.editMode,
+          targetMini: action.miniIndex,
+        },
       };
     }
-    case 'SET_CROSSFADER':
-      return { ...state, crossfader: action.value };
-    case 'SET_ZOOM':
-      return { ...state, zoom: action.value };
-    case 'SET_PAN_X':
-      return { ...state, panX: action.value };
-    case 'OPEN_LIBRARY':
+
+    case 'RESET_MINI_TRANSFORMS': {
+      const newMinis = [...state.minis] as typeof state.minis;
+      newMinis[action.miniIndex] = {
+        ...newMinis[action.miniIndex],
+        zoom: 1.0,
+        panX: 0,
+        panY: 0,
+        swinging: {
+          enabled: false,
+          speed: 20,
+          position: 0,
+          isPaused: false,
+        },
+      };
+      return { ...state, minis: newMinis };
+    }
+
+    case 'SET_CROSSFADER': {
       return {
         ...state,
-        library: { ...state.library, isOpen: true, targetDeck: action.targetDeck },
+        crossfader: action.value,
+        groups: {
+          left: { opacity: calculateGroupOpacity(action.value, 'left') },
+          right: { opacity: calculateGroupOpacity(action.value, 'right') },
+        },
       };
-    case 'CLOSE_LIBRARY':
+    }
+
+    case 'OPEN_LIBRARY': {
       return {
         ...state,
-        library: { ...state.library, isOpen: false, targetDeck: null },
+        library: { ...state.library, isOpen: true, targetMini: action.targetMini },
       };
-    case 'SET_SELECTED_FOLDER':
+    }
+
+    case 'CLOSE_LIBRARY': {
+      return {
+        ...state,
+        library: { ...state.library, isOpen: false, targetMini: null },
+      };
+    }
+
+    case 'SET_SELECTED_FOLDER': {
       return {
         ...state,
         library: { ...state.library, selectedFolder: action.folder },
       };
-    case 'ENABLE_INTERACTION':
+    }
+
+    case 'ENABLE_INTERACTION': {
       return { ...state, isInteractionEnabled: true };
+    }
+
     default:
       return state;
   }

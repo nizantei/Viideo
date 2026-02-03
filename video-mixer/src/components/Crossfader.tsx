@@ -20,8 +20,8 @@ export function Crossfader() {
     { axis: 'x' }
   );
 
-  // Only show if at least one deck has a video
-  const hasVideo = state.deckA.videoId || state.deckB.videoId;
+  // Only show if at least one mini has a video
+  const hasVideo = state.minis.some(mini => mini.videoId !== null);
 
   if (!hasVideo) {
     return null;
@@ -57,8 +57,8 @@ export function Crossfader() {
         />
       </div>
       <div className={styles.labels}>
-        <span className={styles.labelA}>A</span>
-        <span className={styles.labelB}>B</span>
+        <span className={styles.labelA}>L</span>
+        <span className={styles.labelB}>R</span>
       </div>
     </div>
   );

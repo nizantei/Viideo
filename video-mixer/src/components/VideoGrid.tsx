@@ -10,7 +10,7 @@ interface VideoGridProps {
 export function VideoGrid({ onSelect }: VideoGridProps) {
   const { state } = useMixer();
   const videos = getVideosByFolder(state.library.selectedFolder);
-  const targetDeck = state.library.targetDeck;
+  const targetMini = state.library.targetMini;
 
   const getFolderName = (folderId: string) => {
     const folder = folders.find((f) => f.id === folderId);
@@ -31,7 +31,7 @@ export function VideoGrid({ onSelect }: VideoGridProps) {
         <div
           key={video.id}
           className={`${styles.card} ${
-            targetDeck === 'A' ? styles.deckA : styles.deckB
+            targetMini !== null && targetMini < 2 ? styles.deckA : styles.deckB
           }`}
           onClick={() => onSelect(video)}
         >
