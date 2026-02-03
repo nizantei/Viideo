@@ -9,25 +9,26 @@ export function MiniControls() {
         justifyContent: 'space-between',
         padding: '20px',
         gap: '40px',
+        alignItems: 'flex-end',
       }}
     >
-      <div style={{ display: 'flex', gap: '20px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-end' }}>
+        <div style={{ display: 'flex', flexDirection: 'column-reverse', gap: '12px', alignItems: 'center' }}>
           <MiniButton miniIndex={0} />
           <MiniFader miniIndex={0} />
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column-reverse', gap: '12px', alignItems: 'center' }}>
           <MiniButton miniIndex={1} />
           <MiniFader miniIndex={1} />
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '20px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-end' }}>
+        <div style={{ display: 'flex', flexDirection: 'column-reverse', gap: '12px', alignItems: 'center' }}>
           <MiniButton miniIndex={2} />
           <MiniFader miniIndex={2} />
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column-reverse', gap: '12px', alignItems: 'center' }}>
           <MiniButton miniIndex={3} />
           <MiniFader miniIndex={3} />
         </div>

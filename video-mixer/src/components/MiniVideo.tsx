@@ -120,10 +120,10 @@ export function MiniVideo({ miniIndex, miniState, groupOpacity, videoUrl }: Mini
       data-mini-index={miniIndex}
       style={{
         position: 'absolute',
-        width: '50%',
+        width: '100%',
         height: '100%',
         top: 0,
-        left: miniIndex % 2 === 0 ? 0 : '50%',
+        left: 0,
         opacity: finalOpacity,
         zIndex,
         overflow: 'hidden',

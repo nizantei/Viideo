@@ -16,7 +16,12 @@
       "Bash(git remote set-url:*)",
       "Bash(git branch:*)",
       "Bash(git fetch:*)",
-      "Bash(npx vercel:*)"
+      "Bash(npx vercel:*)",
+      "Bash(npm run dev:*)",
+      "WebFetch(domain:video-mixer-ifkwoo24b-nitsans-projects-85f1e02e.vercel.app)",
+      "Bash(git checkout:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)"
     ]
   }
 }
