@@ -4,7 +4,6 @@ import { useLandscapeLock } from '../hooks/useLandscapeLock';
 import { VideoMixer } from './VideoMixer';
 import { MiniControls } from './MiniControls';
 import { TapToLoad } from './TapToLoad';
-import { Crossfader } from './Crossfader';
 import { LibraryOverlay } from './LibraryOverlay';
 import styles from '../styles/App.module.css';
 
@@ -171,7 +170,6 @@ export default function App() {
       <div className={styles.controls}>
         <MiniControls />
         <TapToLoad />
-        <Crossfader />
       </div>
 
       {/* Library modal */}
