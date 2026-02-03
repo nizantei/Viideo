@@ -14,7 +14,7 @@ export function MiniControls() {
         justifyContent: 'center',
         alignItems: 'flex-end',
         padding: '20px',
-        gap: '30px',
+        gap: '60px',
         pointerEvents: 'none',
       }}
     >

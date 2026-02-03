@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import { useMixer } from '../context/MixerContext';
 import { MiniIndex } from '../types';
 
@@ -68,64 +68,33 @@ export function MiniFader({ miniIndex }: MiniFaderProps) {
 
   return (
     <div
+      ref={faderRef}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onMouseDown={handleMouseDown}
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '4px',
+        width: '2px',
+        height: '150px',
+        backgroundColor: '#444',
+        position: 'relative',
+        cursor: 'pointer',
         touchAction: 'none',
       }}
     >
+      {/* Handle */}
       <div
         style={{
-          fontSize: '10px',
-          color: '#888',
-          fontWeight: 500,
+          position: 'absolute',
+          left: '50%',
+          bottom: `${opacityPercent}%`,
+          transform: 'translate(-50%, 50%)',
+          width: '30px',
+          height: '6px',
+          backgroundColor: '#888',
+          pointerEvents: 'none',
         }}
-      >
-        {opacityPercent}%
-      </div>
-      <div
-        ref={faderRef}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onMouseDown={handleMouseDown}
-        style={{
-          width: '40px',
-          height: '120px',
-          backgroundColor: '#2a2a2a',
-          borderRadius: '20px',
-          position: 'relative',
-          cursor: 'pointer',
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: `${opacityPercent}%`,
-            backgroundColor: '#4a9eff',
-            borderRadius: '20px',
-            transition: isDraggingRef.current ? 'none' : 'height 0.1s',
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            left: '50%',
-            bottom: `${opacityPercent}%`,
-            transform: 'translate(-50%, 50%)',
-            width: '50px',
-            height: '8px',
-            backgroundColor: '#888',
-            borderRadius: '4px',
-            pointerEvents: 'none',
-          }}
-        />
-      </div>
+      />
     </div>
   );
 }
