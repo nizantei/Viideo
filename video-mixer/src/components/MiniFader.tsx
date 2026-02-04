@@ -82,19 +82,26 @@ export function MiniFader({ miniIndex }: MiniFaderProps) {
         touchAction: 'none',
       }}
     >
-      {/* Handle */}
+      {/* Handle with larger touch area */}
       <div
         style={{
           position: 'absolute',
           left: '50%',
           bottom: `${opacityPercent}%`,
           transform: 'translate(-50%, 50%)',
-          width: '30px',
-          height: '6px',
-          backgroundColor: '#888',
-          pointerEvents: 'none',
+          padding: '20px',
+          pointerEvents: 'auto',
         }}
-      />
+      >
+        <div
+          style={{
+            width: '30px',
+            height: '6px',
+            backgroundColor: '#888',
+            pointerEvents: 'none',
+          }}
+        />
+      </div>
     </div>
   );
 }

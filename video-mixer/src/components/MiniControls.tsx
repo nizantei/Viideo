@@ -11,14 +11,13 @@ export function MiniControls() {
         left: 0,
         right: 0,
         display: 'flex',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'flex-end',
         padding: '20px',
-        gap: '60px',
         pointerEvents: 'none',
       }}
     >
-      {/* Left group */}
+      {/* Left group - positioned at left edge */}
       <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-end', pointerEvents: 'auto' }}>
         <div style={{ display: 'flex', flexDirection: 'column-reverse', gap: '8px', alignItems: 'center' }}>
           <MiniButton miniIndex={0} />
@@ -31,11 +30,11 @@ export function MiniControls() {
       </div>
 
       {/* Crossfader in the middle */}
-      <div style={{ pointerEvents: 'auto', marginBottom: '10px' }}>
+      <div style={{ pointerEvents: 'auto', marginBottom: '10px', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
         <Crossfader />
       </div>
 
-      {/* Right group */}
+      {/* Right group - positioned at right edge */}
       <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-end', pointerEvents: 'auto' }}>
         <div style={{ display: 'flex', flexDirection: 'column-reverse', gap: '8px', alignItems: 'center' }}>
           <MiniButton miniIndex={2} />

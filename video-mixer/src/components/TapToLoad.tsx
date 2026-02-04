@@ -4,9 +4,9 @@ import styles from '../styles/TapToLoad.module.css';
 export function TapToLoad() {
   const { state, dispatch } = useMixer();
 
-  // Don't show if all minis have videos or library is open
-  const allMinisLoaded = state.minis.every(mini => mini.videoId !== null);
-  if (allMinisLoaded || state.library.isOpen) {
+  // Only show if NO videos are loaded and library is closed
+  const loadedCount = state.minis.filter(mini => mini.videoId !== null).length;
+  if (loadedCount > 0 || state.library.isOpen) {
     return null;
   }
 
@@ -23,20 +23,11 @@ export function TapToLoad() {
     }
   };
 
-  const getMessage = () => {
-    const loadedCount = state.minis.filter(mini => mini.videoId !== null).length;
-    if (loadedCount === 0) {
-      return 'Tap to load your first video';
-    }
-    return `Load video ${loadedCount + 1} of 4`;
-  };
-
   return (
     <div className={styles.container}>
       <button className={styles.button} onClick={handleTap}>
         TAP TO LOAD
       </button>
-      <p className={styles.hint}>{getMessage()}</p>
     </div>
   );
 }
