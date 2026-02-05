@@ -1,8 +1,16 @@
+import { useMixer } from '../context/MixerContext';
 import { MiniButton } from './MiniButton';
 import { MiniFader } from './MiniFader';
 import { Crossfader } from './Crossfader';
 
 export function MiniControls() {
+  const { state } = useMixer();
+
+  // Hide all controls in full-screen mode
+  if (state.isFullScreenMode) {
+    return null;
+  }
+
   return (
     <>
       {/* All elements position themselves from layout.json */}

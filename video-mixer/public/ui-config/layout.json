@@ -196,6 +196,25 @@
       "useSafeArea": false,
       "_zIndex": "100 = highest layer, always on top when visible",
       "zIndex": 100
+    },
+    {
+      "_comment": "Full Screen Button - Hides all UI elements when tapped",
+      "id": "fullScreenButton",
+      "rect": {
+        "_x": "5% from left edge",
+        "x": 0.05,
+        "_y": "Vertically centered",
+        "y": 0.1,
+        "_w": "5% of screen width - small round button",
+        "w": 0.05,
+        "_h": "8.9% of screen height - approximately square",
+        "h": 0.089
+      },
+      "_anchor": "Center anchor on left side",
+      "anchor": "center-left",
+      "useSafeArea": true,
+      "_zIndex": "100 = high layer, visible over most elements",
+      "zIndex": 100
     }
   ],
   "_tips": [

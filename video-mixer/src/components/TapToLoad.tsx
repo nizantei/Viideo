@@ -11,9 +11,9 @@ export function TapToLoad() {
   const shadow = useShadow('button');
   const font = useFont('xl', 'bold');
 
-  // Only show if NO videos are loaded and library is closed
+  // Only show if NO videos are loaded and library is closed and not in full-screen mode
   const loadedCount = state.minis.filter(mini => mini.videoId !== null).length;
-  if (loadedCount > 0 || state.library.isOpen) {
+  if (loadedCount > 0 || state.library.isOpen || state.isFullScreenMode) {
     return null;
   }
 

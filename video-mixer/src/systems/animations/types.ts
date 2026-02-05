@@ -26,9 +26,16 @@ export interface KeyframeDefinition {
   frames: Record<string, Record<string, string>>;
 }
 
+export interface GestureConfig {
+  longPressDelay: number;
+  longPressThreshold: number;
+  dampeningFactor: number;
+}
+
 export interface AnimationConfig {
   version: string;
   transitions: Transitions;
   transforms: Transforms;
   keyframes: Record<string, KeyframeDefinition>;
+  gestures: GestureConfig;
 }

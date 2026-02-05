@@ -148,3 +148,11 @@ export function useTransform(name: keyof AnimationConfig['transforms']): string 
   const config = useAnimation();
   return config.transforms[name];
 }
+
+/**
+ * Get gesture configuration
+ */
+export function useGestureConfig() {
+  const config = useAnimation();
+  return config.gestures;
+}

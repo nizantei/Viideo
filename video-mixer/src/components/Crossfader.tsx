@@ -31,6 +31,11 @@ export function Crossfader() {
     { axis: 'x' }
   );
 
+  // Prevent global gesture from activating on crossfader
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation();
+  };
+
   // Only show if at least one mini has a video
   const hasVideo = state.minis.some(mini => mini.videoId !== null);
 
@@ -55,6 +60,7 @@ export function Crossfader() {
       <div
         ref={trackRef}
         {...bind()}
+        onTouchStart={handleTouchStart}
         style={{
           position: 'relative',
           width: '100%',

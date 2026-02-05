@@ -58,4 +58,18 @@ export function validateAnimationConfig(config: AnimationConfig): void {
       throw new AnimationValidationError(`keyframe "${name}".frames must be an object`);
     }
   }
+
+  // Validate gestures
+  if (!config.gestures || typeof config.gestures !== 'object') {
+    throw new AnimationValidationError('gestures must be an object');
+  }
+  if (typeof config.gestures.longPressDelay !== 'number' || config.gestures.longPressDelay < 0) {
+    throw new AnimationValidationError('gestures.longPressDelay must be a non-negative number');
+  }
+  if (typeof config.gestures.longPressThreshold !== 'number' || config.gestures.longPressThreshold < 0) {
+    throw new AnimationValidationError('gestures.longPressThreshold must be a non-negative number');
+  }
+  if (typeof config.gestures.dampeningFactor !== 'number' || config.gestures.dampeningFactor <= 0) {
+    throw new AnimationValidationError('gestures.dampeningFactor must be a positive number');
+  }
 }

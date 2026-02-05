@@ -1,3 +1,5 @@
+import { BlendMode } from '../services/blendModes';
+
 export interface Video {
   id: string;
   title: string;
@@ -27,6 +29,7 @@ export interface MiniState {
   panX: number;
   panY: number;
   swinging: SwingingState;
+  blendMode: BlendMode;
 }
 
 export interface GroupState {
@@ -44,6 +47,11 @@ export interface LibraryState {
   selectedFolder: string;
 }
 
+export interface BlendModeSelectorState {
+  isOpen: boolean;
+  targetMini: 0 | 1 | 2 | 3 | null;
+}
+
 export interface MixerState {
   minis: [MiniState, MiniState, MiniState, MiniState];
   groups: {
@@ -53,7 +61,9 @@ export interface MixerState {
   crossfader: number;
   editMode: EditModeState;
   library: LibraryState;
+  blendModeSelector: BlendModeSelectorState;
   isInteractionEnabled: boolean;
+  isFullScreenMode: boolean;
 }
 
 export type MiniIndex = 0 | 1 | 2 | 3;
@@ -66,6 +76,7 @@ export type MixerAction =
   | { type: 'SET_MINI_ZOOM'; miniIndex: MiniIndex; zoom: number }
   | { type: 'SET_MINI_PAN'; miniIndex: MiniIndex; panX: number; panY: number }
   | { type: 'UPDATE_MINI_SWINGING'; miniIndex: MiniIndex; swinging: Partial<SwingingState> }
+  | { type: 'SET_MINI_BLEND_MODE'; miniIndex: MiniIndex; blendMode: BlendMode }
   | { type: 'ENTER_EDIT_MODE'; miniIndex: MiniIndex }
   | { type: 'EXIT_EDIT_MODE' }
   | { type: 'SWITCH_EDIT_TARGET'; miniIndex: MiniIndex }
@@ -73,5 +84,9 @@ export type MixerAction =
   | { type: 'SET_CROSSFADER'; value: number }
   | { type: 'OPEN_LIBRARY'; targetMini: MiniIndex }
   | { type: 'CLOSE_LIBRARY' }
+  | { type: 'OPEN_BLEND_MODE_SELECTOR'; miniIndex: MiniIndex }
+  | { type: 'CLOSE_BLEND_MODE_SELECTOR' }
   | { type: 'SET_SELECTED_FOLDER'; folder: string }
-  | { type: 'ENABLE_INTERACTION' };
+  | { type: 'ENABLE_INTERACTION' }
+  | { type: 'TOGGLE_FULLSCREEN_MODE' }
+  | { type: 'EXIT_FULLSCREEN_MODE' };

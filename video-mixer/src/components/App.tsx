@@ -1,16 +1,24 @@
 import { useRef, useEffect } from 'react';
 import { useMixer } from '../context/MixerContext';
 import { useLandscapeLock } from '../hooks/useLandscapeLock';
+import { useGlobalCrossfaderGesture } from '../hooks/useGlobalCrossfaderGesture';
 import { VideoMixer } from './VideoMixer';
 import { MiniControls } from './MiniControls';
 import { TapToLoad } from './TapToLoad';
 import { LibraryOverlay } from './LibraryOverlay';
+import { BlendModeIndicator } from './BlendModeIndicator';
+import { BlendModeSelector } from './BlendModeSelector';
+import { FullScreenButton } from './FullScreenButton';
 import styles from '../styles/App.module.css';
 
 export default function App() {
   const { state, dispatch } = useMixer();
   const { isLandscape } = useLandscapeLock();
   const containerRef = useRef<HTMLDivElement>(null);
+  const fullScreenActivatedTimeRef = useRef<number>(0);
+
+  // Enable global crossfader gesture
+  useGlobalCrossfaderGesture();
 
   // Detect if device is Android
   const isAndroid = /Android/i.test(navigator.userAgent);
@@ -134,8 +142,25 @@ export default function App() {
     };
   }, [isLandscape, isAndroid]);
 
-  // Handle tap on video area - enable interaction and auto-play
+  // Track when full-screen mode is activated to prevent immediate exit
+  useEffect(() => {
+    if (state.isFullScreenMode) {
+      fullScreenActivatedTimeRef.current = Date.now();
+    }
+  }, [state.isFullScreenMode]);
+
+  // Handle tap on video area - exit full-screen mode or enable interaction
   const handleVideoAreaTap = () => {
+    // Exit full-screen mode if active (but only if it's been active for at least 200ms)
+    if (state.isFullScreenMode) {
+      const timeSinceActivation = Date.now() - fullScreenActivatedTimeRef.current;
+      if (timeSinceActivation > 200) {
+        dispatch({ type: 'EXIT_FULLSCREEN_MODE' });
+      }
+      return;
+    }
+
+    // Enable interaction for video playback
     if (!state.isInteractionEnabled) {
       dispatch({ type: 'ENABLE_INTERACTION' });
     }
@@ -170,10 +195,17 @@ export default function App() {
       <div className={styles.controls}>
         <MiniControls />
         <TapToLoad />
+        <FullScreenButton />
       </div>
+
+      {/* Blend mode indicator (only shows in edit mode) */}
+      <BlendModeIndicator />
 
       {/* Library modal */}
       <LibraryOverlay />
+
+      {/* Blend mode selector modal */}
+      <BlendModeSelector />
     </div>
   );
 }

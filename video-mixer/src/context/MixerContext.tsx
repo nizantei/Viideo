@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import { MixerState, MixerAction, MiniState } from '../types';
 import { calculateGroupOpacity } from '../utils/opacity';
+import { BlendMode } from '../services/blendModes';
 
 const initialMiniState: MiniState = {
   videoId: null,
@@ -16,6 +17,7 @@ const initialMiniState: MiniState = {
     position: 0,
     isPaused: false,
   },
+  blendMode: BlendMode.NORMAL,
 };
 
 const initialState: MixerState = {
@@ -39,7 +41,12 @@ const initialState: MixerState = {
     targetMini: null,
     selectedFolder: 'all',
   },
+  blendModeSelector: {
+    isOpen: false,
+    targetMini: null,
+  },
   isInteractionEnabled: false,
+  isFullScreenMode: false,
 };
 
 function mixerReducer(state: MixerState, action: MixerAction): MixerState {
@@ -108,6 +115,15 @@ function mixerReducer(state: MixerState, action: MixerAction): MixerState {
           ...newMinis[action.miniIndex].swinging,
           ...action.swinging,
         },
+      };
+      return { ...state, minis: newMinis };
+    }
+
+    case 'SET_MINI_BLEND_MODE': {
+      const newMinis = [...state.minis] as typeof state.minis;
+      newMinis[action.miniIndex] = {
+        ...newMinis[action.miniIndex],
+        blendMode: action.blendMode,
       };
       return { ...state, minis: newMinis };
     }
@@ -191,8 +207,36 @@ function mixerReducer(state: MixerState, action: MixerAction): MixerState {
       };
     }
 
+    case 'OPEN_BLEND_MODE_SELECTOR': {
+      return {
+        ...state,
+        blendModeSelector: {
+          isOpen: true,
+          targetMini: action.miniIndex,
+        },
+      };
+    }
+
+    case 'CLOSE_BLEND_MODE_SELECTOR': {
+      return {
+        ...state,
+        blendModeSelector: {
+          isOpen: false,
+          targetMini: null,
+        },
+      };
+    }
+
     case 'ENABLE_INTERACTION': {
       return { ...state, isInteractionEnabled: true };
+    }
+
+    case 'TOGGLE_FULLSCREEN_MODE': {
+      return { ...state, isFullScreenMode: !state.isFullScreenMode };
+    }
+
+    case 'EXIT_FULLSCREEN_MODE': {
+      return { ...state, isFullScreenMode: false };
     }
 
     default:

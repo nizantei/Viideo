@@ -1,7 +1,6 @@
 {
   "_description": "Animation Configuration - Controls transitions, transforms, and keyframe animations. Changes take effect after page reload.",
   "version": "1.0.0",
-
   "_transitions_info": "Transition timing for animated changes. Duration in milliseconds (1000ms = 1 second). Easing controls the acceleration curve",
   "transitions": {
     "_fast": "Fast transition (150ms). Used: Quick hover effects, instant feedback",
@@ -24,7 +23,6 @@
       "easing": "ease"
     }
   },
-
   "_transforms_info": "CSS transform values for visual effects. Can be combined (e.g., 'scale(0.95) translateY(-2px)')",
   "transforms": {
     "_scaleDown": "Scale down to 95% size. Used: Button press effects",
@@ -32,7 +30,6 @@
     "_shiftUp": "Move up by 2 pixels. Used: Hover lift effects",
     "shiftUp": "translateY(-2px)"
   },
-
   "_keyframes_info": "Keyframe animations define multi-step animations. Each keyframe (0%, 50%, 100%) defines what properties look like at that point in time",
   "keyframes": {
     "_rotate": "Example rotation animation (not currently used in app)",
@@ -45,12 +42,26 @@
       "iterations": "infinite",
       "_frames": "Animation keyframes. 0% = start, 50% = middle, 100% = end. Can use any CSS properties",
       "frames": {
-        "0%": { "transform": "rotate(0deg)" },
-        "50%": { "transform": "rotate(90deg)" },
-        "100%": { "transform": "rotate(0deg)" }
+        "0%": {
+          "transform": "rotate(0deg)"
+        },
+        "50%": {
+          "transform": "rotate(90deg)"
+        },
+        "100%": {
+          "transform": "rotate(0deg)"
+        }
       }
     }
   },
-
+  "_gestures_info": "Gesture controls for touch interactions. Global crossfader gesture allows controlling crossfader via long press + drag anywhere on screen",
+  "gestures": {
+    "_longPressDelay": "Time (ms) to hold before gesture activates (500ms = 0.5 seconds)",
+    "longPressDelay": 0,
+    "_longPressThreshold": "Max movement (pixels) allowed during long press detection",
+    "longPressThreshold": 10,
+    "_dampeningFactor": "Higher = more gentle response (finger travels 3x distance crossfader moves)",
+    "dampeningFactor": 2.0
+  },
   "_howToAdd": "To add a new keyframe animation, copy the 'rotate' example and change: name, duration, timing, iterations, and frames. Available transform functions: rotate(), scale(), translateX(), translateY(), skew(), etc."
 }

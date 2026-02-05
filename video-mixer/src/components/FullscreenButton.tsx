@@ -1,119 +1,66 @@
-import { useState, useEffect } from 'react';
-import styles from '../styles/FullscreenButton.module.css';
+import React from 'react';
+import { useMixer } from '../context/MixerContext';
+import { useLayoutElement, useColor, useBorderRadius } from '../systems';
 
-// Detect iOS devices
-const isIOS = () => {
-  return /iPhone|iPad|iPod/.test(navigator.userAgent) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-};
+export function FullScreenButton() {
+  const { state, dispatch } = useMixer();
+  const { style } = useLayoutElement('fullScreenButton');
 
-export function FullscreenButton() {
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isIOSDevice] = useState(isIOS());
+  // Config-driven styling
+  const borderRadius = useBorderRadius('round');
+  const bgColor = '#666666'; // Grey color
+  const iconColor = useColor('textButton');
 
-  useEffect(() => {
-    const handleChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
+  // Hide button in full-screen mode
+  if (state.isFullScreenMode) {
+    return null;
+  }
 
-    document.addEventListener('fullscreenchange', handleChange);
-    document.addEventListener('webkitfullscreenchange', handleChange);
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation();
+  };
 
-    return () => {
-      document.removeEventListener('fullscreenchange', handleChange);
-      document.removeEventListener('webkitfullscreenchange', handleChange);
-    };
-  }, []);
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    e.stopPropagation();
+    e.preventDefault(); // Prevent synthetic click event
+    dispatch({ type: 'TOGGLE_FULLSCREEN_MODE' });
+  };
 
-  const toggleFullscreen = async () => {
-    // iOS Safari workaround - scroll to hide address bar
-    if (isIOSDevice) {
-      if (!isFullscreen) {
-        // Add fullscreen class to body for CSS-based fullscreen
-        document.body.classList.add('ios-fullscreen');
-
-        // Force a reflow
-        document.body.offsetHeight;
-
-        // Multiple scroll attempts to ensure address bar hides
-        const hideAddressBar = () => {
-          window.scrollTo(0, 100);
-          setTimeout(() => window.scrollTo(0, 100), 0);
-          setTimeout(() => window.scrollTo(0, 100), 100);
-          setTimeout(() => window.scrollTo(0, 100), 300);
-        };
-
-        hideAddressBar();
-        setIsFullscreen(true);
-
-        // Request screen orientation lock if available
-        try {
-          const screen = window.screen as any;
-          if (screen.orientation?.lock) {
-            await screen.orientation.lock('landscape').catch(() => {});
-          }
-        } catch (err) {
-          // Orientation lock not supported
-        }
-      } else {
-        document.body.classList.remove('ios-fullscreen');
-        window.scrollTo(0, 0);
-        setIsFullscreen(false);
-
-        // Unlock orientation
-        try {
-          const screen = window.screen as any;
-          if (screen.orientation?.unlock) {
-            screen.orientation.unlock();
-          }
-        } catch (err) {
-          // Orientation unlock not supported
-        }
-      }
-      return;
-    }
-
-    // Standard fullscreen for non-iOS devices
-    try {
-      if (!document.fullscreenElement) {
-        const elem = document.documentElement as HTMLElement & {
-          webkitRequestFullscreen?: () => Promise<void>;
-        };
-
-        if (elem.requestFullscreen) {
-          await elem.requestFullscreen();
-        } else if (elem.webkitRequestFullscreen) {
-          await elem.webkitRequestFullscreen();
-        }
-      } else {
-        const doc = document as Document & {
-          webkitExitFullscreen?: () => Promise<void>;
-        };
-
-        if (doc.exitFullscreen) {
-          await doc.exitFullscreen();
-        } else if (doc.webkitExitFullscreen) {
-          await doc.webkitExitFullscreen();
-        }
-      }
-    } catch (err) {
-      console.error('Fullscreen error:', err);
-    }
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    dispatch({ type: 'TOGGLE_FULLSCREEN_MODE' });
   };
 
   return (
-    <button className={styles.button} onClick={toggleFullscreen}>
-      {isFullscreen ? (
-        // Exit fullscreen icon
-        <svg className={styles.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
-        </svg>
-      ) : (
-        // Enter fullscreen icon
-        <svg className={styles.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
-        </svg>
-      )}
+    <button
+      style={{
+        ...style,
+        backgroundColor: bgColor,
+        border: 'none',
+        borderRadius,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        touchAction: 'manipulation',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+      }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onClick={handleClick}
+    >
+      <svg
+        width="60%"
+        height="60%"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke={iconColor}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+      </svg>
     </button>
   );
 }
