@@ -1,0 +1,50 @@
+{
+  "_description": "Spacing Configuration - Controls padding, margins, and gaps using a consistent 4px scale. Changes take effect after page reload.",
+  "version": "1.0.0",
+
+  "_scale_info": "Spacing scale in pixels using multiples of 4 for visual consistency. 0=none, 1=4px, 2=8px, etc. Use these values for padding, margin, and gap",
+  "scale": {
+    "_0": "No spacing (0px)",
+    "0": 0,
+    "_1": "Extra small (4px). Used: Tight padding, subtle gaps",
+    "1": 4,
+    "_2": "Small (8px). Used: Button padding, compact layouts",
+    "2": 8,
+    "_3": "Medium-small (12px). Used: Standard padding",
+    "3": 12,
+    "_4": "Medium (16px). Used: Section padding, comfortable spacing",
+    "4": 16,
+    "_5": "Medium-large (20px). Used: Generous padding",
+    "5": 20,
+    "_6": "Large (24px). Used: Section gaps, large padding",
+    "6": 24,
+    "_8": "Extra large (32px). Used: Major section breaks, button padding (Tap to Load: 32px horizontal)",
+    "8": 32,
+    "_10": "XXL (40px). Used: Page margins, large separations",
+    "10": 40,
+    "_12": "XXXL (48px). Used: Hero section padding, major gaps",
+    "12": 48
+  },
+
+  "_components_info": "Component-specific spacing overrides. Define custom padding/margin for specific UI elements",
+  "components": {
+    "_button": "Standard button spacing",
+    "button": {
+      "_padding": "Can be a single number or an object with x (horizontal) and y (vertical)",
+      "padding": {
+        "_x": "Horizontal padding: scale[2] = 8px left and right",
+        "x": 8,
+        "_y": "Vertical padding: scale[1] = 4px top and bottom",
+        "y": 4
+      }
+    },
+    "_modal": "Modal dialog spacing",
+    "modal": {
+      "_padding": "Single value means same padding on all sides: scale[6] = 24px",
+      "padding": 6
+    }
+  },
+
+  "_howToUse": "In code, use useSpace(2) to get 8px, or useSpace(4) to get 16px. For component spacing, access via useSpacing().components.button.padding",
+  "_tips": "Stick to the scale for visual consistency. Avoid arbitrary values like 13px or 27px. The 4px scale (4, 8, 12, 16, 20, 24...) creates harmonious layouts"
+}

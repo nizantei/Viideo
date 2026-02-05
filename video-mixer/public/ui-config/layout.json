@@ -1,0 +1,212 @@
+{
+  "_description": "Layout Configuration - Defines position and size of all UI elements using normalized coordinates (0-1). Changes take effect after page reload. This system is VIEWPORT-RELATIVE, meaning elements automatically scale to any screen size.",
+  "_coordinateSystem": "All positions and sizes use values from 0.0 to 1.0 (0% to 100% of viewport). Example: x:0.5 = 50% from left, w:0.25 = 25% of screen width. This makes the layout responsive to any screen size automatically.",
+  "version": "1.0.0",
+  "_safeArea_explanation": "Safe area creates padding around the screen edges to avoid notches (iPhone), rounded corners, and system UI. Values are fractions of viewport (0.02 = 2% padding). Elements with useSafeArea:true will stay within this safe zone.",
+  "safeArea": {
+    "_top": "Top padding (0.02 = 2% of screen height). Avoids status bars and notches",
+    "top": 0.02,
+    "_right": "Right padding (0.02 = 2% of screen width). Avoids curved screen edges",
+    "right": 0.02,
+    "_bottom": "Bottom padding (0.02 = 2% of screen height). Avoids home indicators and gesture areas",
+    "bottom": 0.02,
+    "_left": "Left padding (0.02 = 2% of screen width). Avoids curved screen edges",
+    "left": 0.02
+  },
+  "_elements_explanation": "Each element defines a UI component's position, size, and behavior. Required: id, rect. Optional: anchor, useSafeArea, zIndex, hitSlop, minSize, maxSize, aspectRatio, visible.",
+  "elements": [
+    {
+      "_comment": "Mini Button 1 - Bottom left video slot",
+      "id": "mini1",
+      "rect": {
+        "_x": "Horizontal position: 0.140 = 14% from left edge of safe area",
+        "x": 0.140,
+        "_y": "Vertical position: 1.0 = 100% from top = bottom edge (anchor adjusts actual position)",
+        "y": 1,
+        "_w": "Width: 0.091 = 9.1% of screen width (roughly square on most screens)",
+        "w": 0.091,
+        "_h": "Height: 0.094 = 9.4% of screen height",
+        "h": 0.094
+      },
+      "_anchor": "Which corner/edge of element to position at x,y. Options: top-left, top-center, top-right, center-left, center, center-right, bottom-left, bottom-center, bottom-right",
+      "anchor": "bottom-left",
+      "_useSafeArea": "If true, position is calculated within safe area (respects safeArea padding). If false, uses full viewport",
+      "useSafeArea": true,
+      "_zIndex": "Stacking order. Higher = on top. Range: 1-100. Mini buttons=10, crossfader=10, tapToLoad=100",
+      "zIndex": 10
+    },
+    {
+      "_comment": "Mini Button 2 - Second from left",
+      "id": "mini2",
+      "rect": {
+        "x": 0.250,
+        "y": 1,
+        "w": 0.091,
+        "h": 0.094
+      },
+      "anchor": "bottom-left",
+      "useSafeArea": true,
+      "zIndex": 10
+    },
+    {
+      "_comment": "Mini Button 3 - Second from right",
+      "id": "mini3",
+      "rect": {
+        "x": 0.659,
+        "y": 1,
+        "w": 0.091,
+        "h": 0.094
+      },
+      "anchor": "bottom-left",
+      "useSafeArea": true,
+      "zIndex": 10
+    },
+    {
+      "_comment": "Mini Button 4 - Bottom right video slot",
+      "id": "mini4",
+      "rect": {
+        "x": 0.769,
+        "y": 1,
+        "w": 0.091,
+        "h": 0.094
+      },
+      "anchor": "bottom-left",
+      "useSafeArea": true,
+      "zIndex": 10
+    },
+    {
+      "_comment": "Vertical Fader 1 - Controls opacity for mini1. Thin vertical line with expanded touch area (hitSlop)",
+      "id": "vfader1",
+      "rect": {
+        "_x": "Centered above mini1 button (0.186 ≈ 0.140 + 0.091/2)",
+        "x": 0.186,
+        "_y": "Positioned 86% down the screen, leaving room below for mini button",
+        "y": 0.860,
+        "_w": "Very thin (0.001 = 0.1% of width) - the visible line is just a slim bar",
+        "w": 0.001,
+        "_h": "Tall (0.234 = 23.4% of height) - provides vertical travel for opacity control",
+        "h": 0.234
+      },
+      "anchor": "bottom-center",
+      "useSafeArea": true,
+      "zIndex": 5,
+      "_hitSlop": "Expands the touchable area beyond the visible element. Makes thin faders easier to grab. Values are fractions of viewport.",
+      "hitSlop": {
+        "_top": "Extra touch area above (0 = none)",
+        "top": 0,
+        "_right": "Extra touch area to right (0.015 = 1.5% of screen width = ~15-20px on most screens)",
+        "right": 0.015,
+        "_bottom": "Extra touch area below (0 = none)",
+        "bottom": 0,
+        "_left": "Extra touch area to left (0.015 = 1.5% of screen width)",
+        "left": 0.015
+      }
+    },
+    {
+      "_comment": "Vertical Fader 2 - Controls opacity for mini2",
+      "id": "vfader2",
+      "rect": {
+        "x": 0.295,
+        "y": 0.860,
+        "w": 0.001,
+        "h": 0.234
+      },
+      "anchor": "bottom-center",
+      "useSafeArea": true,
+      "zIndex": 5,
+      "hitSlop": {
+        "top": 0,
+        "right": 0.015,
+        "bottom": 0,
+        "left": 0.015
+      }
+    },
+    {
+      "_comment": "Vertical Fader 3 - Controls opacity for mini3",
+      "id": "vfader3",
+      "rect": {
+        "x": 0.704,
+        "y": 0.860,
+        "w": 0.001,
+        "h": 0.234
+      },
+      "anchor": "bottom-center",
+      "useSafeArea": true,
+      "zIndex": 5,
+      "hitSlop": {
+        "top": 0,
+        "right": 0.015,
+        "bottom": 0,
+        "left": 0.015
+      }
+    },
+    {
+      "_comment": "Vertical Fader 4 - Controls opacity for mini4",
+      "id": "vfader4",
+      "rect": {
+        "x": 0.813,
+        "y": 0.860,
+        "w": 0.001,
+        "h": 0.234
+      },
+      "anchor": "bottom-center",
+      "useSafeArea": true,
+      "zIndex": 5,
+      "hitSlop": {
+        "top": 0,
+        "right": 0.015,
+        "bottom": 0,
+        "left": 0.015
+      }
+    },
+    {
+      "_comment": "Crossfader - Left/right balance control between stereo channels. Horizontal slider at bottom center",
+      "id": "crossfader",
+      "rect": {
+        "_x": "Centered horizontally (0.5 = 50% = middle of screen)",
+        "x": 0.5,
+        "_y": "Near bottom (0.950 = 95% down)",
+        "y": 0.950,
+        "_w": "30% of screen width - wide enough for smooth control",
+        "w": 0.30,
+        "_h": "2% of screen height - thin horizontal bar",
+        "h": 0.050
+      },
+      "_anchor": "Center anchor means x,y point is at center of element (not corner)",
+      "anchor": "bottom-center",
+      "useSafeArea": true,
+      "zIndex": 10
+    },
+    {
+      "_comment": "Tap to Load Button - Initial prompt shown when no videos are loaded. Center of screen",
+      "id": "tapToLoad",
+      "rect": {
+        "_x": "Dead center horizontally (0.5 = 50%)",
+        "x": 0.5,
+        "_y": "Dead center vertically (0.5 = 50%)",
+        "y": 0.5,
+        "_w": "15% of screen width - compact button",
+        "w": 0.15,
+        "_h": "30% of screen height - tall to be noticeable",
+        "h": 0.30
+      },
+      "_anchor": "Center anchor means button grows equally in all directions from x,y",
+      "anchor": "center",
+      "_useSafeArea": "False = ignores safe area and uses full viewport (button is in center, safe from notches anyway)",
+      "useSafeArea": false,
+      "_zIndex": "100 = highest layer, always on top when visible",
+      "zIndex": 100
+    }
+  ],
+  "_tips": [
+    "To move an element: change x (horizontal) or y (vertical). 0=left/top, 1=right/bottom",
+    "To resize: change w (width) or h (height). 0.1=10% of screen, 0.5=50% of screen",
+    "Anchor determines which point of the element is positioned at x,y. 'center' means the center point, 'top-left' means the top-left corner",
+    "Use bottom-anchors (bottom-left, bottom-center, bottom-right) for elements that should stay at bottom when screen resizes",
+    "Use center anchors for elements that should stay centered",
+    "hitSlop makes thin elements easier to touch. Add 0.01-0.02 to sides of thin faders/sliders",
+    "zIndex controls layering. Higher values appear on top. Keep mini buttons and controls at 10, modals at 100+",
+    "useSafeArea:true keeps elements away from notches and rounded corners. Use for elements near edges",
+    "All coordinates are relative (0-1), so the layout works on any screen size automatically"
+  ]
+}

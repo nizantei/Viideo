@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useMixer } from '../context/MixerContext';
 import { getVideosByFolder, folders } from '../data/videos';
 import { Video } from '../types';
@@ -9,13 +10,39 @@ interface VideoGridProps {
 
 export function VideoGrid({ onSelect }: VideoGridProps) {
   const { state } = useMixer();
-  const videos = getVideosByFolder(state.library.selectedFolder);
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [loading, setLoading] = useState(true);
   const targetMini = state.library.targetMini;
+
+  // Load videos when folder changes
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+
+    getVideosByFolder(state.library.selectedFolder).then((loadedVideos) => {
+      if (!cancelled) {
+        setVideos(loadedVideos);
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [state.library.selectedFolder]);
 
   const getFolderName = (folderId: string) => {
     const folder = folders.find((f) => f.id === folderId);
     return folder?.name || folderId;
   };
+
+  if (loading) {
+    return (
+      <div className={styles.grid}>
+        <div className={styles.emptyState}>Loading clips...</div>
+      </div>
+    );
+  }
 
   if (videos.length === 0) {
     return (

@@ -1,5 +1,6 @@
 import { useRef, useCallback } from 'react';
 import { useMixer } from '../context/MixerContext';
+import { useLayoutElement, useColor } from '../systems';
 import { MiniIndex } from '../types';
 
 interface MiniFaderProps {
@@ -8,8 +9,13 @@ interface MiniFaderProps {
 
 export function MiniFader({ miniIndex }: MiniFaderProps) {
   const { state, dispatch } = useMixer();
+  const { style, hitSlop } = useLayoutElement(`vfader${miniIndex + 1}`);
   const faderRef = useRef<HTMLDivElement>(null);
   const isDraggingRef = useRef(false);
+
+  // Config-driven styling
+  const bgColor = useColor('borderInactive');
+  const handleColor = useColor('textLabel');
 
   const miniState = state.minis[miniIndex];
 
@@ -35,7 +41,7 @@ export function MiniFader({ miniIndex }: MiniFaderProps) {
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (!isDraggingRef.current) return;
-    e.preventDefault();
+    // No need for preventDefault since touch-action: none is set in CSS
     handleMove(e.touches[0].clientY);
   }, [handleMove]);
 
@@ -66,6 +72,9 @@ export function MiniFader({ miniIndex }: MiniFaderProps) {
 
   const opacityPercent = Math.round(miniState.opacity * 100);
 
+  // Calculate handle padding from hitSlop
+  const handlePaddingPx = hitSlop ? `${Math.max(hitSlop.left, hitSlop.right)}px` : '20px';
+
   return (
     <div
       ref={faderRef}
@@ -74,10 +83,8 @@ export function MiniFader({ miniIndex }: MiniFaderProps) {
       onTouchEnd={handleTouchEnd}
       onMouseDown={handleMouseDown}
       style={{
-        width: '2px',
-        height: '150px',
-        backgroundColor: '#444',
-        position: 'relative',
+        ...style,
+        backgroundColor: bgColor,
         cursor: 'pointer',
         touchAction: 'none',
       }}
@@ -89,7 +96,7 @@ export function MiniFader({ miniIndex }: MiniFaderProps) {
           left: '50%',
           bottom: `${opacityPercent}%`,
           transform: 'translate(-50%, 50%)',
-          padding: '20px',
+          padding: handlePaddingPx,
           pointerEvents: 'auto',
         }}
       >
@@ -97,7 +104,7 @@ export function MiniFader({ miniIndex }: MiniFaderProps) {
           style={{
             width: '30px',
             height: '6px',
-            backgroundColor: '#888',
+            backgroundColor: handleColor,
             pointerEvents: 'none',
           }}
         />

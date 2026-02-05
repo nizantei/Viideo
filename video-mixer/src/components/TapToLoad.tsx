@@ -1,8 +1,15 @@
 import { useMixer } from '../context/MixerContext';
-import styles from '../styles/TapToLoad.module.css';
+import { useLayoutElement, useGradient, useBorderRadius, useShadow, useFont } from '../systems';
 
 export function TapToLoad() {
   const { state, dispatch } = useMixer();
+  const { style } = useLayoutElement('tapToLoad');
+
+  // Config-driven styling
+  const gradient = useGradient('tapToLoad');
+  const borderRadius = useBorderRadius('large');
+  const shadow = useShadow('button');
+  const font = useFont('xl', 'bold');
 
   // Only show if NO videos are loaded and library is closed
   const loadedCount = state.minis.filter(mini => mini.videoId !== null).length;
@@ -24,8 +31,23 @@ export function TapToLoad() {
   };
 
   return (
-    <div className={styles.container}>
-      <button className={styles.button} onClick={handleTap}>
+    <div style={style}>
+      <button
+        onClick={handleTap}
+        style={{
+          width: '100%',
+          height: '100%',
+          padding: '16px 32px',
+          ...font,
+          color: 'white',
+          background: gradient,
+          border: 'none',
+          borderRadius,
+          cursor: 'pointer',
+          touchAction: 'manipulation',
+          boxShadow: shadow,
+        }}
+      >
         TAP TO LOAD
       </button>
     </div>

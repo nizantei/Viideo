@@ -1,0 +1,56 @@
+{
+  "_description": "Animation Configuration - Controls transitions, transforms, and keyframe animations. Changes take effect after page reload.",
+  "version": "1.0.0",
+
+  "_transitions_info": "Transition timing for animated changes. Duration in milliseconds (1000ms = 1 second). Easing controls the acceleration curve",
+  "transitions": {
+    "_fast": "Fast transition (150ms). Used: Quick hover effects, instant feedback",
+    "fast": {
+      "_duration": "150 milliseconds (0.15 seconds)",
+      "duration": 150,
+      "_easing": "Easing function: ease (slow start, fast middle, slow end), linear (constant speed), ease-in (slow start), ease-out (slow end), ease-in-out (slow start and end)",
+      "easing": "ease"
+    },
+    "_normal": "Normal transition (200ms). Used: Mini button borders, standard interactions",
+    "normal": {
+      "_duration": "200 milliseconds (0.2 seconds)",
+      "duration": 200,
+      "easing": "ease"
+    },
+    "_slow": "Slow transition (300ms). Used: Smooth, deliberate animations",
+    "slow": {
+      "_duration": "300 milliseconds (0.3 seconds)",
+      "duration": 300,
+      "easing": "ease"
+    }
+  },
+
+  "_transforms_info": "CSS transform values for visual effects. Can be combined (e.g., 'scale(0.95) translateY(-2px)')",
+  "transforms": {
+    "_scaleDown": "Scale down to 95% size. Used: Button press effects",
+    "scaleDown": "scale(0.95)",
+    "_shiftUp": "Move up by 2 pixels. Used: Hover lift effects",
+    "shiftUp": "translateY(-2px)"
+  },
+
+  "_keyframes_info": "Keyframe animations define multi-step animations. Each keyframe (0%, 50%, 100%) defines what properties look like at that point in time",
+  "keyframes": {
+    "_rotate": "Example rotation animation (not currently used in app)",
+    "rotate": {
+      "_duration": "2000 milliseconds (2 seconds) for one complete cycle",
+      "duration": 2000,
+      "_timing": "Easing: ease-in-out means slow at start and end, faster in middle",
+      "timing": "ease-in-out",
+      "_iterations": "How many times to repeat: 'infinite' or a number (1, 2, 3, etc.)",
+      "iterations": "infinite",
+      "_frames": "Animation keyframes. 0% = start, 50% = middle, 100% = end. Can use any CSS properties",
+      "frames": {
+        "0%": { "transform": "rotate(0deg)" },
+        "50%": { "transform": "rotate(90deg)" },
+        "100%": { "transform": "rotate(0deg)" }
+      }
+    }
+  },
+
+  "_howToAdd": "To add a new keyframe animation, copy the 'rotate' example and change: name, duration, timing, iterations, and frames. Available transform functions: rotate(), scale(), translateX(), translateY(), skew(), etc."
+}

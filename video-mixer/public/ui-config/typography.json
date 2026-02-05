@@ -1,0 +1,64 @@
+{
+  "_description": "Typography Configuration - Controls all font families, sizes, weights, line heights, and letter spacing. Changes take effect after page reload.",
+  "version": "1.0.0",
+
+  "_fontFamily_info": "Font stacks for different text types. System fonts load instantly and look native on each platform",
+  "fontFamily": {
+    "_primary": "Main font stack using system fonts. Falls back gracefully: Apple devices use SF Pro, Windows uses Segoe UI, others use Roboto or sans-serif",
+    "primary": "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif",
+    "_monospace": "Fixed-width font for code or technical text. Uses system monospace font",
+    "monospace": "monospace"
+  },
+
+  "_fontSize_info": "Font sizes in pixels. Smaller numbers = smaller text. Used throughout the app for consistent sizing",
+  "fontSize": {
+    "_xs": "Extra small (10px). Used: Mini button numbers, crossfader labels",
+    "xs": 10,
+    "_sm": "Small (11px). Used: Secondary labels, helper text",
+    "sm": 11,
+    "_base": "Base/default size (12px). Used: Body text, standard UI text",
+    "base": 12,
+    "_md": "Medium (13px). Used: Emphasized body text",
+    "md": 13,
+    "_lg": "Large (14px). Used: Subheadings, important labels",
+    "lg": 14,
+    "_xl": "Extra large (18px). Used: Tap to Load button",
+    "xl": 18,
+    "_xxl": "Extra extra large (20px). Used: Page titles, hero text",
+    "xxl": 20
+  },
+
+  "_fontWeight_info": "Font weights control text thickness. 100=thin, 400=normal, 700=bold, 900=black. Common weights: 400 (normal), 500 (medium), 600 (semibold), 700 (bold)",
+  "fontWeight": {
+    "_normal": "Normal/regular weight (400). Used: Body text, standard UI",
+    "normal": 400,
+    "_medium": "Medium weight (500). Used: Slightly emphasized text",
+    "medium": 500,
+    "_semibold": "Semibold weight (600). Used: Headings, important labels",
+    "semibold": 600,
+    "_bold": "Bold weight (700). Used: Tap to Load button, strong emphasis",
+    "bold": 700
+  },
+
+  "_lineHeight_info": "Line height controls vertical spacing between lines of text. 1.0 = no extra space, 1.5 = 50% extra space. Affects readability",
+  "lineHeight": {
+    "_tight": "Tight spacing (1.2). Used: Compact layouts, UI labels",
+    "tight": 1.2,
+    "_normal": "Normal spacing (1.5). Used: Body text, readable paragraphs",
+    "normal": 1.5,
+    "_relaxed": "Relaxed spacing (1.75). Used: Large text, easy reading",
+    "relaxed": 1.75
+  },
+
+  "_letterSpacing_info": "Letter spacing (tracking) controls horizontal space between characters. Negative = tighter, positive = looser. Uses em units (relative to font size)",
+  "letterSpacing": {
+    "_tight": "Tight tracking (-0.02em). Used: Large headings, compact text",
+    "tight": "-0.02em",
+    "_normal": "Normal tracking (0). Used: Most text, default spacing",
+    "normal": "0",
+    "_wide": "Wide tracking (0.05em). Used: Small caps, button text",
+    "wide": "0.05em",
+    "_wider": "Extra wide tracking (0.1em). Used: Spaced out headings, emphasis",
+    "wider": "0.1em"
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "_description": "Theme Configuration - Controls all colors, visual effects, and styling throughout the app. Changes take effect after page reload.",
+  "version": "1.0.0",
+  "_colors_info": "All colors can be hex (#0a0a0f), rgb (rgb(10,10,15)), rgba (rgba(10,10,15,0.95)), or named colors (black, white, red, etc.)",
+  "colors": {
+    "_background": "Main background color for the entire app. Used: App background, button backgrounds",
+    "background": "#0a0a0f",
+    "_backgroundVideo": "Background for video player areas (pure black for better contrast). Used: Crossfader track, video containers",
+    "backgroundVideo": "#000",
+    "_deckA": "Deck A accent color (cyan/blue). Used: Future deck labeling",
+    "deckA": "#00d4ff",
+    "_deckB": "Deck B accent color (red/pink). Used: Future deck labeling",
+    "deckB": "#ff4466",
+    "_textPrimary": "Primary text color (white). Used: Main text, headings, high-contrast text",
+    "textPrimary": "#ffffff",
+    "_textMuted": "Muted/secondary text color (gray). Used: Disabled text, secondary information",
+    "textMuted": "#666680",
+    "_textLabel": "Label text color (lighter gray). Used: Button labels, mini button numbers, crossfader labels",
+    "textLabel": "#888",
+    "_borderActive": "Active border color (bright blue). Used: Mini buttons with video loaded, crossfader thumb and fill",
+    "borderActive": "#4a9eff",
+    "_borderInactive": "Inactive border color (dark gray). Used: Empty mini buttons, fader backgrounds, center mark",
+    "borderInactive": "#555",
+    "_borderEdit": "Edit mode border color (orange). Used: Mini button border when in edit mode",
+    "borderEdit": "#ff6b00",
+    "_surfaceBase": "Base surface color (very subtle white overlay). Used: Subtle backgrounds, overlays",
+    "surfaceBase": "rgba(255, 255, 255, 0.05)",
+    "_surfaceHover": "Hover surface color (slightly brighter overlay). Used: Interactive elements on hover",
+    "surfaceHover": "rgba(255, 255, 255, 0.1)",
+    "_overlayDark": "Dark overlay for modals/popups. Used: Modal backgrounds, overlay dialogs",
+    "overlayDark": "rgba(10, 10, 15, 0.95)",
+    "_overlayBlack": "Black overlay with transparency. Used: Dimmed backgrounds, shadow overlays",
+    "overlayBlack": "rgba(0, 0, 0, 0.8)"
+  },
+  "_gradients_info": "Color gradients used in the app. Each gradient has: type (linear/radial), angle (degrees: 0=up, 90=right, 135=diagonal), stops (colors with positions 0-100)",
+  "gradients": {
+    "_tapToLoad": "Gradient for the TAP TO LOAD button. Purple-blue gradient at 135° diagonal",
+    "tapToLoad": {
+      "type": "linear",
+      "angle": 135,
+      "stops": [
+        {
+          "color": "#667eea",
+          "position": 0
+        },
+        {
+          "color": "#764ba2",
+          "position": 100
+        }
+      ]
+    }
+  },
+  "effects": {
+    "_borderRadius_info": "Rounded corner values in pixels, or 50% for perfect circles",
+    "borderRadius": {
+      "_small": "Subtle rounding (4px). Used: Crossfader track",
+      "small": 4,
+      "_medium": "Standard rounding (8px). Used: Mini buttons",
+      "medium": 8,
+      "_large": "More rounded (12px). Used: Tap to Load button",
+      "large": 12,
+      "_xlarge": "Very rounded corners (16px)",
+      "xlarge": 16,
+      "_round": "Perfect circle (50%). Used: Crossfader thumb",
+      "round": "50%"
+    },
+    "_blur_info": "Backdrop blur values in pixels. Higher = more blur",
+    "blur": {
+      "_small": "Subtle blur (8px) for glass effects",
+      "small": 8,
+      "_medium": "Medium blur (10px) for modals",
+      "medium": 10
+    },
+    "_shadow_info": "Box shadow effects. Format: 'offsetX offsetY blur spread color'. Example: 0 4px 12px rgba(0,0,0,0.3) means 4px down, 12px blur, 30% black",
+    "shadow": {
+      "_button": "Drop shadow for the Tap to Load button",
+      "button": "0 4px 12px rgba(0, 0, 0, 0.3)"
+    },
+    "_opacity_info": "Transparency values from 0 (invisible) to 1 (fully opaque)",
+    "opacity": {
+      "_inactive": "Half transparent (0.5) for disabled elements",
+      "inactive": 0.5,
+      "_active": "Fully opaque (1.0) for active elements",
+      "active": 1.0,
+      "_muted": "Slightly transparent (0.6) for secondary elements",
+      "muted": 0.6,
+      "_fill": "Crossfader fill transparency (0.3)",
+      "fill": 0.3
+    }
+  },
+  "_borders_info": "Border width values in pixels. Higher numbers = thicker borders",
+  "borders": {
+    "_thin": "Hairline border (1px)",
+    "thin": 1,
+    "_normal": "Standard border (2px). Used: Mini buttons in normal state",
+    "normal": 2,
+    "_thick": "Thick border (4px). Used: Mini buttons in edit mode",
+    "thick": 4
+  }
+}

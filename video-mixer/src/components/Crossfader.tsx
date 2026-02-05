@@ -1,11 +1,22 @@
 import { useRef } from 'react';
 import { useDrag } from '@use-gesture/react';
 import { useMixer } from '../context/MixerContext';
-import styles from '../styles/Crossfader.module.css';
+import { useLayoutElement, useColor, useBorderRadius, useOpacity } from '../systems';
 
 export function Crossfader() {
   const { state, dispatch } = useMixer();
+  const { style } = useLayoutElement('crossfader');
   const trackRef = useRef<HTMLDivElement>(null);
+
+  // Config-driven styling
+  const bgColor = useColor('backgroundVideo');
+  const centerMarkColor = useColor('borderInactive');
+  const fillColor = useColor('borderActive');
+  const thumbColor = useColor('borderActive');
+  const thumbBorder = useColor('background');
+  const labelColor = useColor('textLabel');
+  const borderRadius = useBorderRadius('small');
+  const fillOpacity = useOpacity('fill');
 
   const bind = useDrag(
     ({ xy: [x] }) => {
@@ -40,25 +51,91 @@ export function Crossfader() {
     : '0%';
 
   return (
-    <div className={styles.container}>
-      <div ref={trackRef} className={styles.track} {...bind()}>
-        <div className={styles.centerMark} />
+    <div style={style}>
+      <div
+        ref={trackRef}
+        {...bind()}
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          backgroundColor: bgColor,
+          borderRadius,
+          cursor: 'pointer',
+          touchAction: 'none',
+        }}
+      >
+        {/* Center mark */}
         <div
-          className={styles.fillLeft}
-          style={{ width: leftFillWidth }}
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: 0,
+            bottom: 0,
+            width: '2px',
+            backgroundColor: centerMarkColor,
+            transform: 'translateX(-50%)',
+          }}
         />
+        {/* Left fill */}
         <div
-          className={styles.fillRight}
-          style={{ width: rightFillWidth }}
+          style={{
+            position: 'absolute',
+            right: '50%',
+            top: 0,
+            bottom: 0,
+            width: leftFillWidth,
+            backgroundColor: fillColor,
+            opacity: fillOpacity,
+            borderRadius: `${borderRadius} 0 0 ${borderRadius}`,
+          }}
         />
+        {/* Right fill */}
         <div
-          className={styles.thumb}
-          style={{ left: thumbPosition }}
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: 0,
+            bottom: 0,
+            width: rightFillWidth,
+            backgroundColor: fillColor,
+            opacity: fillOpacity,
+            borderRadius: `0 ${borderRadius} ${borderRadius} 0`,
+          }}
+        />
+        {/* Thumb */}
+        <div
+          style={{
+            position: 'absolute',
+            left: thumbPosition,
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '20px',
+            height: '20px',
+            backgroundColor: thumbColor,
+            borderRadius: '50%',
+            border: `2px solid ${thumbBorder}`,
+            pointerEvents: 'none',
+          }}
         />
       </div>
-      <div className={styles.labels}>
-        <span className={styles.labelA}>L</span>
-        <span className={styles.labelB}>R</span>
+      {/* Labels */}
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          fontSize: '10px',
+          color: labelColor,
+          marginTop: '4px',
+          pointerEvents: 'none',
+        }}
+      >
+        <span>L</span>
+        <span>R</span>
       </div>
     </div>
   );

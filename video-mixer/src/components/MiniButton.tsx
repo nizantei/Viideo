@@ -1,5 +1,6 @@
 import React, { useRef, useCallback } from 'react';
 import { useMixer } from '../context/MixerContext';
+import { useLayoutElement, useColor, useBorderRadius, useTransition } from '../systems';
 import { MiniIndex } from '../types';
 
 interface MiniButtonProps {
@@ -8,8 +9,19 @@ interface MiniButtonProps {
 
 export function MiniButton({ miniIndex }: MiniButtonProps) {
   const { state, dispatch } = useMixer();
+  const { style } = useLayoutElement(`mini${miniIndex + 1}`);
   const longPressTimerRef = useRef<number | null>(null);
   const touchStartTimeRef = useRef<number>(0);
+
+  // Config-driven styling
+  const borderRadius = useBorderRadius('medium');
+  const borderColorActive = useColor('borderActive');
+  const borderColorInactive = useColor('borderInactive');
+  const borderColorEdit = useColor('borderEdit');
+  const bgColor = useColor('background');
+  const bgColorVideo = useColor('backgroundVideo');
+  const textColor = useColor('textLabel');
+  const transition = useTransition('normal', ['border']);
 
   const miniState = state.minis[miniIndex];
   const isEditing = state.editMode.active && state.editMode.targetMini === miniIndex;
@@ -24,14 +36,9 @@ export function MiniButton({ miniIndex }: MiniButtonProps) {
   }, [miniIndex, dispatch, state.editMode]);
 
   const handleShortTap = useCallback(() => {
-    if (state.editMode.active) {
-      if (state.editMode.targetMini !== miniIndex) {
-        dispatch({ type: 'SWITCH_EDIT_TARGET', miniIndex });
-      }
-    } else {
-      dispatch({ type: 'OPEN_LIBRARY', targetMini: miniIndex });
-    }
-  }, [miniIndex, dispatch, state.editMode]);
+    // Always open library on short tap, regardless of edit mode
+    dispatch({ type: 'OPEN_LIBRARY', targetMini: miniIndex });
+  }, [miniIndex, dispatch]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     e.stopPropagation();
@@ -42,6 +49,7 @@ export function MiniButton({ miniIndex }: MiniButtonProps) {
   }, [handleLongPress]);
 
   const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    e.preventDefault(); // Prevent synthetic click event
     e.stopPropagation();
     if (longPressTimerRef.current) {
       clearTimeout(longPressTimerRef.current);
@@ -63,6 +71,7 @@ export function MiniButton({ miniIndex }: MiniButtonProps) {
   }, [handleLongPress]);
 
   const handleMouseUp = useCallback((e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent any unwanted click propagation
     e.stopPropagation();
     if (longPressTimerRef.current) {
       clearTimeout(longPressTimerRef.current);
@@ -76,7 +85,7 @@ export function MiniButton({ miniIndex }: MiniButtonProps) {
   }, [handleShortTap]);
 
   const borderWidth = isEditing ? '4px' : '2px';
-  const borderColor = isEditing ? '#ff6b00' : hasVideo ? '#4a9eff' : '#555';
+  const borderColor = isEditing ? borderColorEdit : hasVideo ? borderColorActive : borderColorInactive;
 
   return (
     <button
@@ -85,14 +94,12 @@ export function MiniButton({ miniIndex }: MiniButtonProps) {
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       style={{
-        width: '60px',
-        height: '60px',
-        borderRadius: '8px',
+        ...style,
+        borderRadius,
         border: `${borderWidth} solid ${borderColor}`,
-        backgroundColor: hasVideo ? '#1a1a1a' : '#0a0a0a',
+        backgroundColor: hasVideo ? bgColorVideo : bgColor,
         cursor: 'pointer',
-        transition: 'border 0.2s',
-        position: 'relative',
+        transition,
         overflow: 'hidden',
         touchAction: 'none',
       }}
@@ -104,7 +111,7 @@ export function MiniButton({ miniIndex }: MiniButtonProps) {
           left: '4px',
           fontSize: '10px',
           fontWeight: 'bold',
-          color: '#888',
+          color: textColor,
         }}
       >
         {miniIndex + 1}
@@ -117,11 +124,11 @@ export function MiniButton({ miniIndex }: MiniButtonProps) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '12px',
+            fontSize: '10px',
             color: '#888',
           }}
         >
-          ...
+          loading
         </div>
       )}
     </button>

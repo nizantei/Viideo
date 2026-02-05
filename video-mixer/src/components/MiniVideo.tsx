@@ -43,6 +43,7 @@ export function MiniVideo({ miniIndex, miniState, groupOpacity, videoUrl }: Mini
 
     video.addEventListener('canplay', handleCanPlay);
     video.addEventListener('error', handleError);
+    video.addEventListener('loadeddata', handleCanPlay); // Alternative event for HLS
 
     // Check for native HLS support
     const canPlayHLS = video.canPlayType('application/vnd.apple.mpegurl');
@@ -63,7 +64,22 @@ export function MiniVideo({ miniIndex, miniState, groupOpacity, videoUrl }: Mini
 
       hls.on(Hls.Events.ERROR, (_, data) => {
         if (data.fatal) {
-          console.error('HLS fatal error:', data);
+          console.error('HLS fatal error for mini', miniIndex, data);
+          dispatch({ type: 'SET_MINI_LOADING', miniIndex, isLoading: false });
+          switch (data.type) {
+            case Hls.ErrorTypes.NETWORK_ERROR:
+              console.error('Network error - trying to recover');
+              hls.startLoad();
+              break;
+            case Hls.ErrorTypes.MEDIA_ERROR:
+              console.error('Media error - trying to recover');
+              hls.recoverMediaError();
+              break;
+            default:
+              console.error('Fatal error - cannot recover');
+              hls.destroy();
+              break;
+          }
         }
       });
 
@@ -73,12 +89,13 @@ export function MiniVideo({ miniIndex, miniState, groupOpacity, videoUrl }: Mini
     return () => {
       video.removeEventListener('canplay', handleCanPlay);
       video.removeEventListener('error', handleError);
+      video.removeEventListener('loadeddata', handleCanPlay);
       if (hlsRef.current) {
         hlsRef.current.destroy();
         hlsRef.current = null;
       }
     };
-  }, [videoUrl, miniIndex, dispatch]);
+  }, [videoUrl, miniIndex, dispatch, miniState.isPlaying]);
 
   // Handle play/pause
   useEffect(() => {

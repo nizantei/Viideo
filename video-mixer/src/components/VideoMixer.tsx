@@ -1,14 +1,25 @@
+import { useState, useEffect } from 'react';
 import { useMixer } from '../context/MixerContext';
 import { MiniVideo } from './MiniVideo';
 import { getMiniGroup } from '../utils/opacity';
-import { videos } from '../data/videos';
+import { getVideos } from '../data/videos';
+import { Video } from '../types';
 
 export function VideoMixer() {
   const { state } = useMixer();
+  const [videosMap, setVideosMap] = useState<Map<string, Video>>(new Map());
+
+  // Load all videos once and create a lookup map
+  useEffect(() => {
+    getVideos().then((videos) => {
+      const map = new Map(videos.map(v => [v.id, v]));
+      setVideosMap(map);
+    });
+  }, []);
 
   const getVideoUrl = (videoId: string | null) => {
     if (!videoId) return undefined;
-    const video = videos.find(v => v.id === videoId);
+    const video = videosMap.get(videoId);
     return video?.hlsUrl;
   };
 
@@ -17,11 +28,10 @@ export function VideoMixer() {
       className="videoMixer"
       style={{
         position: 'relative',
-        width: '100%',
-        height: '100%',
         aspectRatio: '3 / 1',
-        maxWidth: '100vw',
-        maxHeight: '100vh',
+        width: '100vw',
+        maxWidth: 'calc(100vh * 3)',
+        height: 'auto',
         backgroundColor: '#000',
         overflow: 'hidden',
       }}
