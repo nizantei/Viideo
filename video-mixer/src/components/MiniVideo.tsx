@@ -3,6 +3,7 @@ import { MiniState, MiniIndex } from '../types';
 import { useMixer } from '../context/MixerContext';
 import { calculateFinalOpacity } from '../utils/opacity';
 import { buildTransformString, calculateSwingTranslateX } from '../utils/transforms';
+import { blendModeToCSSMixBlendMode } from '../utils/blendModeMapping';
 import Hls from 'hls.js';
 
 interface MiniVideoProps {
@@ -129,6 +130,7 @@ export function MiniVideo({ miniIndex, miniState, groupOpacity, videoUrl }: Mini
   );
 
   const zIndex = miniIndex + 1;
+  const mixBlendMode = blendModeToCSSMixBlendMode(miniState.blendMode);
 
   return (
     <div
@@ -145,6 +147,7 @@ export function MiniVideo({ miniIndex, miniState, groupOpacity, videoUrl }: Mini
         zIndex,
         overflow: 'hidden',
         pointerEvents: finalOpacity > 0.01 ? 'auto' : 'none',
+        mixBlendMode,
       }}
     >
       {videoUrl && (

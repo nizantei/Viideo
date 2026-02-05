@@ -1,33 +1,36 @@
 import { vertexShaderSource, fragmentShaderSource } from './shaders';
+import { MiniState } from '../../types';
+import { BLEND_MODE_TO_SHADER_INT } from '../blendModes';
 
 export class WebGLMixer {
   private gl: WebGLRenderingContext;
   private program: WebGLProgram | null = null;
-  private textureA: WebGLTexture | null = null;
-  private textureB: WebGLTexture | null = null;
+  private textures: (WebGLTexture | null)[] = [null, null, null, null];
   private positionBuffer: WebGLBuffer | null = null;
   private texCoordBuffer: WebGLBuffer | null = null;
 
   // Uniform locations
   private u_resolution: WebGLUniformLocation | null = null;
-  private u_blend: WebGLUniformLocation | null = null;
-  private u_zoom: WebGLUniformLocation | null = null;
-  private u_panX: WebGLUniformLocation | null = null;
-  private u_textureA: WebGLUniformLocation | null = null;
-  private u_textureB: WebGLUniformLocation | null = null;
-  private u_hasTextureA: WebGLUniformLocation | null = null;
-  private u_hasTextureB: WebGLUniformLocation | null = null;
-  private u_videoSizeA: WebGLUniformLocation | null = null;
-  private u_videoSizeB: WebGLUniformLocation | null = null;
+  private u_texture: (WebGLUniformLocation | null)[] = [];
+  private u_hasTexture: (WebGLUniformLocation | null)[] = [];
+  private u_videoSize: (WebGLUniformLocation | null)[] = [];
+  private u_opacity: (WebGLUniformLocation | null)[] = [];
+  private u_blendMode: (WebGLUniformLocation | null)[] = [];
+  private u_zoom: (WebGLUniformLocation | null)[] = [];
+  private u_panX: (WebGLUniformLocation | null)[] = [];
+  private u_panY: (WebGLUniformLocation | null)[] = [];
 
   // Attribute locations
   private a_position: number = -1;
   private a_texCoord: number = -1;
 
-  private hasTextureA = false;
-  private hasTextureB = false;
-  private videoSizeA = { width: 0, height: 0 };
-  private videoSizeB = { width: 0, height: 0 };
+  private hasTexture = [false, false, false, false];
+  private videoSizes = [
+    { width: 0, height: 0 },
+    { width: 0, height: 0 },
+    { width: 0, height: 0 },
+    { width: 0, height: 0 },
+  ];
 
   constructor(canvas: HTMLCanvasElement) {
     const gl = canvas.getContext('webgl', {
@@ -71,27 +74,27 @@ export class WebGLMixer {
 
     // Get uniform locations
     this.u_resolution = gl.getUniformLocation(this.program, 'u_resolution');
-    this.u_blend = gl.getUniformLocation(this.program, 'u_blend');
-    this.u_zoom = gl.getUniformLocation(this.program, 'u_zoom');
-    this.u_panX = gl.getUniformLocation(this.program, 'u_panX');
-    this.u_textureA = gl.getUniformLocation(this.program, 'u_textureA');
-    this.u_textureB = gl.getUniformLocation(this.program, 'u_textureB');
-    this.u_hasTextureA = gl.getUniformLocation(this.program, 'u_hasTextureA');
-    this.u_hasTextureB = gl.getUniformLocation(this.program, 'u_hasTextureB');
-    this.u_videoSizeA = gl.getUniformLocation(this.program, 'u_videoSizeA');
-    this.u_videoSizeB = gl.getUniformLocation(this.program, 'u_videoSizeB');
+
+    for (let i = 0; i < 4; i++) {
+      this.u_texture[i] = gl.getUniformLocation(this.program, `u_texture${i}`);
+      this.u_hasTexture[i] = gl.getUniformLocation(this.program, `u_hasTexture${i}`);
+      this.u_videoSize[i] = gl.getUniformLocation(this.program, `u_videoSize${i}`);
+      this.u_opacity[i] = gl.getUniformLocation(this.program, `u_opacity${i}`);
+      this.u_blendMode[i] = gl.getUniformLocation(this.program, `u_blendMode${i}`);
+      this.u_zoom[i] = gl.getUniformLocation(this.program, `u_zoom${i}`);
+      this.u_panX[i] = gl.getUniformLocation(this.program, `u_panX${i}`);
+      this.u_panY[i] = gl.getUniformLocation(this.program, `u_panY${i}`);
+    }
 
     // Create buffers
     this.positionBuffer = gl.createBuffer();
     this.texCoordBuffer = gl.createBuffer();
 
     // Create textures
-    this.textureA = this.createTexture();
-    this.textureB = this.createTexture();
-
-    // Set up texture units
-    gl.uniform1i(this.u_textureA, 0);
-    gl.uniform1i(this.u_textureB, 1);
+    for (let i = 0; i < 4; i++) {
+      this.textures[i] = this.createTexture();
+      gl.uniform1i(this.u_texture[i], i);
+    }
 
     // Set up geometry (fullscreen quad)
     this.setupGeometry();
@@ -187,43 +190,49 @@ export class WebGLMixer {
     this.setupGeometry();
   }
 
-  updateTextureA(video: HTMLVideoElement) {
-    this.updateTexture(this.textureA, video, 0);
-    this.hasTextureA = true;
-    this.videoSizeA = { width: video.videoWidth, height: video.videoHeight };
-  }
+  updateTexture(miniIndex: number, video: HTMLVideoElement) {
+    if (miniIndex < 0 || miniIndex > 3) return;
 
-  updateTextureB(video: HTMLVideoElement) {
-    this.updateTexture(this.textureB, video, 1);
-    this.hasTextureB = true;
-    this.videoSizeB = { width: video.videoWidth, height: video.videoHeight };
-  }
-
-  private updateTexture(texture: WebGLTexture | null, video: HTMLVideoElement, unit: number) {
+    const texture = this.textures[miniIndex];
     if (!texture || video.readyState < 2) return;
 
     const { gl } = this;
-    gl.activeTexture(gl.TEXTURE0 + unit);
+    gl.activeTexture(gl.TEXTURE0 + miniIndex);
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+
+    this.hasTexture[miniIndex] = true;
+    this.videoSizes[miniIndex] = { width: video.videoWidth, height: video.videoHeight };
   }
 
-  render(blend: number, zoom: number, panX: number) {
+  render(
+    minis: [MiniState, MiniState, MiniState, MiniState],
+    groupOpacities: { left: number; right: number }
+  ) {
     const { gl } = this;
 
     if (!this.program) return;
 
     gl.useProgram(this.program);
 
-    // Set uniforms
+    // Set resolution uniform
     gl.uniform2f(this.u_resolution, gl.canvas.width, gl.canvas.height);
-    gl.uniform1f(this.u_blend, blend);
-    gl.uniform1f(this.u_zoom, zoom);
-    gl.uniform1f(this.u_panX, panX);
-    gl.uniform1i(this.u_hasTextureA, this.hasTextureA ? 1 : 0);
-    gl.uniform1i(this.u_hasTextureB, this.hasTextureB ? 1 : 0);
-    gl.uniform2f(this.u_videoSizeA, this.videoSizeA.width, this.videoSizeA.height);
-    gl.uniform2f(this.u_videoSizeB, this.videoSizeB.width, this.videoSizeB.height);
+
+    // Set uniforms for each mini
+    for (let i = 0; i < 4; i++) {
+      const mini = minis[i];
+      const groupOpacity = i < 2 ? groupOpacities.left : groupOpacities.right;
+      const effectiveOpacity = mini.opacity * groupOpacity;
+      const blendModeInt = BLEND_MODE_TO_SHADER_INT[mini.blendMode];
+
+      gl.uniform1i(this.u_hasTexture[i], this.hasTexture[i] ? 1 : 0);
+      gl.uniform2f(this.u_videoSize[i], this.videoSizes[i].width, this.videoSizes[i].height);
+      gl.uniform1f(this.u_opacity[i], effectiveOpacity);
+      gl.uniform1i(this.u_blendMode[i], blendModeInt);
+      gl.uniform1f(this.u_zoom[i], mini.zoom);
+      gl.uniform1f(this.u_panX[i], mini.panX);
+      gl.uniform1f(this.u_panY[i], mini.panY);
+    }
 
     // Bind position buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
@@ -239,21 +248,20 @@ export class WebGLMixer {
     gl.drawArrays(gl.TRIANGLES, 0, 6);
   }
 
-  clearTextureA() {
-    this.hasTextureA = false;
-    this.videoSizeA = { width: 0, height: 0 };
-  }
+  clearTexture(miniIndex: number) {
+    if (miniIndex < 0 || miniIndex > 3) return;
 
-  clearTextureB() {
-    this.hasTextureB = false;
-    this.videoSizeB = { width: 0, height: 0 };
+    this.hasTexture[miniIndex] = false;
+    this.videoSizes[miniIndex] = { width: 0, height: 0 };
   }
 
   dispose() {
     const { gl } = this;
 
-    if (this.textureA) gl.deleteTexture(this.textureA);
-    if (this.textureB) gl.deleteTexture(this.textureB);
+    for (const texture of this.textures) {
+      if (texture) gl.deleteTexture(texture);
+    }
+
     if (this.positionBuffer) gl.deleteBuffer(this.positionBuffer);
     if (this.texCoordBuffer) gl.deleteBuffer(this.texCoordBuffer);
     if (this.program) gl.deleteProgram(this.program);

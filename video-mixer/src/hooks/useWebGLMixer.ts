@@ -1,22 +1,27 @@
 import { useRef, useEffect, useCallback } from 'react';
 import { WebGLMixer } from '../services/webgl/WebGLMixer';
+import { MiniState } from '../types';
 
 interface UseWebGLMixerOptions {
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  videoA: HTMLVideoElement | null;
-  videoB: HTMLVideoElement | null;
-  blend: number;
-  zoom: number;
-  panX: number;
+  minis: [MiniState, MiniState, MiniState, MiniState];
+  videoRefs: [
+    React.RefObject<HTMLVideoElement | null>,
+    React.RefObject<HTMLVideoElement | null>,
+    React.RefObject<HTMLVideoElement | null>,
+    React.RefObject<HTMLVideoElement | null>
+  ];
+  groupOpacities: {
+    left: number;
+    right: number;
+  };
 }
 
 export function useWebGLMixer({
   canvasRef,
-  videoA,
-  videoB,
-  blend,
-  zoom,
-  panX,
+  minis,
+  videoRefs,
+  groupOpacities,
 }: UseWebGLMixerOptions) {
   const mixerRef = useRef<WebGLMixer | null>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -69,16 +74,15 @@ export function useWebGLMixer({
         lastRenderRef.current = timestamp - (elapsed % frameInterval);
 
         // Update textures from video elements
-        if (videoA && videoA.readyState >= 2) {
-          mixer.updateTextureA(videoA);
+        for (let i = 0; i < 4; i++) {
+          const video = videoRefs[i].current;
+          if (video && video.readyState >= 2) {
+            mixer.updateTexture(i, video);
+          }
         }
 
-        if (videoB && videoB.readyState >= 2) {
-          mixer.updateTextureB(videoB);
-        }
-
-        // Render blended frame
-        mixer.render(blend, zoom, panX);
+        // Render composited frame
+        mixer.render(minis, groupOpacities);
       }
 
       animationFrameRef.current = requestAnimationFrame(render);
@@ -91,15 +95,11 @@ export function useWebGLMixer({
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [videoA, videoB, blend, zoom, panX, frameInterval]);
+  }, [minis, videoRefs, groupOpacities, frameInterval]);
 
-  const clearDeck = useCallback((deck: 'A' | 'B') => {
-    if (deck === 'A') {
-      mixerRef.current?.clearTextureA();
-    } else {
-      mixerRef.current?.clearTextureB();
-    }
+  const clearMini = useCallback((miniIndex: number) => {
+    mixerRef.current?.clearTexture(miniIndex);
   }, []);
 
-  return { clearDeck };
+  return { clearMini };
 }
