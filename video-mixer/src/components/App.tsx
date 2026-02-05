@@ -8,7 +8,7 @@ import { TapToLoad } from './TapToLoad';
 import { LibraryOverlay } from './LibraryOverlay';
 import { BlendModeIndicator } from './BlendModeIndicator';
 import { BlendModeSelector } from './BlendModeSelector';
-import { FullScreenButton } from './FullScreenButton';
+import { FullScreenButton } from './FullscreenButton';
 import styles from '../styles/App.module.css';
 
 export default function App() {

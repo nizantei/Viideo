@@ -9,7 +9,7 @@ export function FullScreenButton() {
   // Config-driven styling
   const borderRadius = useBorderRadius('round');
   const bgColor = '#666666'; // Grey color
-  const iconColor = useColor('textButton');
+  const iconColor = useColor('textPrimary');
 
   // Hide button in full-screen mode
   if (state.isFullScreenMode) {
