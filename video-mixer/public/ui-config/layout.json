@@ -20,7 +20,7 @@
       "id": "mini1",
       "rect": {
         "_x": "Horizontal position: 0.140 = 14% from left edge of safe area",
-        "x": 0.140,
+        "x": 0.160,
         "_y": "Vertical position: 1.0 = 100% from top = bottom edge (anchor adjusts actual position)",
         "y": 1,
         "_w": "Width: 0.091 = 9.1% of screen width (roughly square on most screens)",
@@ -65,7 +65,7 @@
       "_comment": "Mini Button 4 - Bottom right video slot",
       "id": "mini4",
       "rect": {
-        "x": 0.769,
+        "x": 0.749,
         "y": 1,
         "w": 0.091,
         "h": 0.094
@@ -79,13 +79,13 @@
       "id": "vfader1",
       "rect": {
         "_x": "Centered above mini1 button (0.186 ≈ 0.140 + 0.091/2)",
-        "x": 0.186,
+        "x": 0.206,
         "_y": "Positioned 86% down the screen, leaving room below for mini button",
         "y": 0.860,
         "_w": "Very thin (0.001 = 0.1% of width) - the visible line is just a slim bar",
         "w": 0.001,
         "_h": "Tall (0.234 = 23.4% of height) - provides vertical travel for opacity control",
-        "h": 0.234
+        "h": 0.370
       },
       "anchor": "bottom-center",
       "useSafeArea": true,
@@ -109,7 +109,7 @@
         "x": 0.295,
         "y": 0.860,
         "w": 0.001,
-        "h": 0.234
+        "h": 0.370
       },
       "anchor": "bottom-center",
       "useSafeArea": true,
@@ -128,7 +128,7 @@
         "x": 0.704,
         "y": 0.860,
         "w": 0.001,
-        "h": 0.234
+        "h": 0.370
       },
       "anchor": "bottom-center",
       "useSafeArea": true,
@@ -144,10 +144,10 @@
       "_comment": "Vertical Fader 4 - Controls opacity for mini4",
       "id": "vfader4",
       "rect": {
-        "x": 0.813,
+        "x": 0.793,
         "y": 0.860,
         "w": 0.001,
-        "h": 0.234
+        "h": 0.370
       },
       "anchor": "bottom-center",
       "useSafeArea": true,

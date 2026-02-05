@@ -61,7 +61,7 @@
     "_longPressThreshold": "Max movement (pixels) allowed during long press detection",
     "longPressThreshold": 10,
     "_dampeningFactor": "Higher = more gentle response (finger travels 3x distance crossfader moves)",
-    "dampeningFactor": 2.0
+    "dampeningFactor": 0.7
   },
   "_howToAdd": "To add a new keyframe animation, copy the 'rotate' example and change: name, duration, timing, iterations, and frames. Available transform functions: rotate(), scale(), translateX(), translateY(), skew(), etc."
 }
