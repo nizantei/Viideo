@@ -1,13 +1,11 @@
+/* Side panel library layout - left panel (folders) + right panel (videos) */
+
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 1000;
-  opacity: 0;
   pointer-events: none;
+  opacity: 0;
   transition: opacity 0.3s ease;
 }
 
@@ -16,82 +14,184 @@
   pointer-events: auto;
 }
 
-.modal {
-  width: 85%;
-  height: 85%;
-  max-width: 900px;
-  max-height: 600px;
-  background: var(--color-overlay-bg);
-  border-radius: 16px;
-  border: 1px solid var(--color-border);
+/* Invisible tap target in the center gap to close panels */
+.centerTap {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--folder-panel-width, 18%);
+  right: var(--video-panel-width, 22%);
+}
+
+/* Shared panel base styles */
+.folderPanel,
+.videoPanel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transform: translateY(20px);
   transition: transform 0.3s ease;
 }
 
-.overlay.open .modal {
-  transform: translateY(0);
+/* Left panel - Folders */
+.folderPanel {
+  left: 0;
+  width: var(--folder-panel-width, 18%);
+  background: var(--panel-bg, rgba(0, 0, 0, 0.85));
+  border-right: 1px solid var(--color-border);
+  transform: translateX(-100%);
 }
 
-.header {
+.overlay.open .folderPanel {
+  transform: translateX(0);
+}
+
+/* Right panel - Videos */
+.videoPanel {
+  right: 0;
+  width: var(--video-panel-width, 22%);
+  background: var(--panel-bg, rgba(0, 0, 0, 0.85));
+  border-left: 1px solid var(--color-border);
+  transform: translateX(100%);
+}
+
+.overlay.open .videoPanel {
+  transform: translateX(0);
+}
+
+/* Panel headers */
+.panelHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 24px;
+  padding: 10px 12px;
   border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
 }
 
-.title {
-  font-size: 14px;
+.panelTitle {
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  color: var(--color-text-muted);
 }
 
-.titleDeckA {
+.panelTitle.titleDeckA {
   color: var(--color-deck-a);
 }
 
-.titleDeckB {
+.panelTitle.titleDeckB {
   color: var(--color-deck-b);
 }
 
 .closeButton {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   background: var(--color-surface);
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   color: var(--color-text);
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background 0.2s ease;
+  flex-shrink: 0;
 }
 
 .closeButton:hover {
   background: var(--color-surface-hover);
 }
 
-.content {
+/* Scrollable content area */
+.panelScroll {
   flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Video list items (vertical) */
+.videoItem {
   display: flex;
-  overflow: hidden;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  transition: background 0.15s ease;
 }
 
-.sidebar {
-  width: 180px;
-  border-right: 1px solid var(--color-border);
-  padding: 16px 0;
-  overflow-y: auto;
+.videoItem:hover {
+  background: var(--color-surface);
 }
 
-.main {
+.videoItem:active {
+  background: var(--color-surface-hover);
+}
+
+.videoThumb {
+  width: 56px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 4px;
+  background: #1a1a24;
+  flex-shrink: 0;
+}
+
+.videoInfo {
   flex: 1;
-  padding: 16px;
-  overflow-y: auto;
+  min-width: 0;
+}
+
+.videoTitle {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.videoFolder {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Clear channel button */
+.clearButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: calc(100% - 16px);
+  margin: 8px;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.clearButton:hover {
+  background: var(--color-surface);
+  border-color: var(--color-text-muted);
+}
+
+/* Empty/loading state */
+.emptyState {
+  padding: 24px 12px;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 12px;
 }

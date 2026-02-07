@@ -67,6 +67,42 @@ export const BLEND_MODE_REGISTRY: BlendModeMetadata[] = [
     description: 'Creates posterized result with limited colors',
     category: 'contrast',
   },
+  {
+    id: BlendMode.LINEAR_BURN,
+    displayName: 'Linear Burn',
+    description: 'Adds colors and subtracts white, intense darken',
+    category: 'darken',
+  },
+  {
+    id: BlendMode.SUBTRACT,
+    displayName: 'Subtract',
+    description: 'Subtracts blend from base color',
+    category: 'darken',
+  },
+  {
+    id: BlendMode.LINEAR_DODGE,
+    displayName: 'Linear Dodge (Add)',
+    description: 'Adds color values, brightens highlights',
+    category: 'lighten',
+  },
+  {
+    id: BlendMode.DIVIDE,
+    displayName: 'Divide',
+    description: 'Divides base by blend, extreme lighten',
+    category: 'lighten',
+  },
+  {
+    id: BlendMode.VIVID_LIGHT,
+    displayName: 'Vivid Light',
+    description: 'Burns or dodges based on blend brightness',
+    category: 'contrast',
+  },
+  {
+    id: BlendMode.PIN_LIGHT,
+    displayName: 'Pin Light',
+    description: 'Replaces dark/light based on blend value',
+    category: 'contrast',
+  },
 ];
 
 export function getBlendModeMetadata(mode: BlendMode): BlendModeMetadata {

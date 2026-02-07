@@ -1,14 +1,12 @@
 import { useMixer } from '../context/MixerContext';
-import { useLayoutElement, useGradient, useBorderRadius, useShadow, useFont } from '../systems';
+import { useLayoutElement, useBorderRadius, useFont } from '../systems';
 
 export function TapToLoad() {
   const { state, dispatch } = useMixer();
   const { style } = useLayoutElement('tapToLoad');
 
   // Config-driven styling
-  const gradient = useGradient('tapToLoad');
   const borderRadius = useBorderRadius('large');
-  const shadow = useShadow('button');
   const font = useFont('xl', 'bold');
 
   // Only show if NO videos are loaded and library is closed and not in full-screen mode
@@ -34,18 +32,22 @@ export function TapToLoad() {
     <div style={style}>
       <button
         onClick={handleTap}
+        onTouchEnd={(e) => {
+          e.preventDefault();
+          handleTap();
+        }}
         style={{
           width: '100%',
           height: '100%',
           padding: '16px 32px',
           ...font,
-          color: 'white',
-          background: gradient,
-          border: 'none',
+          color: '#555',
+          background: '#000',
+          border: '2px solid #333',
           borderRadius,
           cursor: 'pointer',
           touchAction: 'manipulation',
-          boxShadow: shadow,
+          letterSpacing: '2px',
         }}
       >
         TAP TO LOAD

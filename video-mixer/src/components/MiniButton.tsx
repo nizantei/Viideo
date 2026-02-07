@@ -1,6 +1,6 @@
 import React, { useRef, useCallback } from 'react';
 import { useMixer } from '../context/MixerContext';
-import { useLayoutElement, useColor, useBorderRadius, useTransition } from '../systems';
+import { useLayoutElement, useColor, useBorderRadius } from '../systems';
 import { MiniIndex } from '../types';
 
 interface MiniButtonProps {
@@ -9,25 +9,42 @@ interface MiniButtonProps {
 
 export function MiniButton({ miniIndex }: MiniButtonProps) {
   const { state, dispatch } = useMixer();
-  const { style } = useLayoutElement(`mini${miniIndex + 1}`);
+  const { style, rect } = useLayoutElement(`mini${miniIndex + 1}`);
   const longPressTimerRef = useRef<number | null>(null);
-  const touchStartTimeRef = useRef<number>(0);
+  const longPressTriggeredRef = useRef(false);
+  const isTouchActiveRef = useRef(false);
 
   // Config-driven styling
   const borderRadius = useBorderRadius('medium');
-  const borderColorActive = useColor('borderActive');
   const borderColorInactive = useColor('borderInactive');
   const borderColorEdit = useColor('borderEdit');
   const bgColor = useColor('background');
   const bgColorVideo = useColor('backgroundVideo');
   const textColor = useColor('textLabel');
-  const transition = useTransition('normal', ['border']);
 
   const miniState = state.minis[miniIndex];
   const isEditing = state.editMode.active && state.editMode.targetMini === miniIndex;
   const hasVideo = miniState.videoId !== null;
 
+  // --- Opacity fill border calculations ---
+  // The fill goes around 3 sides: left (bottom→top), top (left→right), right (top→bottom)
+  // Bottom border is always grey
+  const bw = rect?.w ?? 50;
+  const bh = rect?.h ?? 50;
+  const totalPerim = 2 * bh + bw; // left + top + right
+  const fillDist = miniState.opacity * totalPerim;
+
+  const leftFill = Math.min(fillDist / bh, 1);
+  const topFill = fillDist > bh ? Math.min((fillDist - bh) / bw, 1) : 0;
+  const rightFill = fillDist > bh + bw ? Math.min((fillDist - bh - bw) / bh, 1) : 0;
+
+  const BORDER_W = 2; // px
+  const EDIT_BORDER_W = 3; // px
+  const blueColor = '#4a9eff';
+
   const handleLongPress = useCallback(() => {
+    longPressTriggeredRef.current = true;
+    longPressTimerRef.current = null;
     if (state.editMode.active && state.editMode.targetMini === miniIndex) {
       dispatch({ type: 'EXIT_EDIT_MODE' });
     } else {
@@ -36,74 +53,110 @@ export function MiniButton({ miniIndex }: MiniButtonProps) {
   }, [miniIndex, dispatch, state.editMode]);
 
   const handleShortTap = useCallback(() => {
-    // Always open library on short tap, regardless of edit mode
     dispatch({ type: 'OPEN_LIBRARY', targetMini: miniIndex });
   }, [miniIndex, dispatch]);
 
+  // --- Touch handlers ---
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     e.stopPropagation();
-    touchStartTimeRef.current = Date.now();
+    isTouchActiveRef.current = true;
+    longPressTriggeredRef.current = false;
     longPressTimerRef.current = window.setTimeout(() => {
       handleLongPress();
     }, 500);
   }, [handleLongPress]);
 
   const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    e.preventDefault(); // Prevent synthetic click event
+    e.preventDefault();
     e.stopPropagation();
     if (longPressTimerRef.current) {
       clearTimeout(longPressTimerRef.current);
       longPressTimerRef.current = null;
     }
-
-    const duration = Date.now() - touchStartTimeRef.current;
-    if (duration < 500) {
+    if (!longPressTriggeredRef.current) {
       handleShortTap();
     }
+    setTimeout(() => { isTouchActiveRef.current = false; }, 300);
   }, [handleShortTap]);
 
+  const handleTouchCancel = useCallback(() => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+    longPressTriggeredRef.current = false;
+    setTimeout(() => { isTouchActiveRef.current = false; }, 300);
+  }, []);
+
+  // --- Mouse handlers (desktop only, blocked during touch) ---
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (isTouchActiveRef.current) return;
     e.stopPropagation();
-    touchStartTimeRef.current = Date.now();
+    longPressTriggeredRef.current = false;
     longPressTimerRef.current = window.setTimeout(() => {
       handleLongPress();
     }, 500);
   }, [handleLongPress]);
 
   const handleMouseUp = useCallback((e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent any unwanted click propagation
+    if (isTouchActiveRef.current) return;
+    e.preventDefault();
     e.stopPropagation();
     if (longPressTimerRef.current) {
       clearTimeout(longPressTimerRef.current);
       longPressTimerRef.current = null;
     }
-
-    const duration = Date.now() - touchStartTimeRef.current;
-    if (duration < 500) {
+    if (!longPressTriggeredRef.current) {
       handleShortTap();
     }
   }, [handleShortTap]);
-
-  const borderWidth = isEditing ? '4px' : '2px';
-  const borderColor = isEditing ? borderColorEdit : hasVideo ? borderColorActive : borderColorInactive;
 
   return (
     <button
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchCancel}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
+      onContextMenu={(e) => e.preventDefault()}
       style={{
         ...style,
         borderRadius,
-        border: `${borderWidth} solid ${borderColor}`,
+        border: 'none',
+        padding: 0,
         backgroundColor: hasVideo ? bgColorVideo : bgColor,
         cursor: 'pointer',
-        transition,
         overflow: 'hidden',
-        touchAction: 'none',
+        touchAction: 'manipulation',
+        WebkitTouchCallout: 'none',
+        WebkitUserSelect: 'none',
+        userSelect: 'none',
+        boxShadow: isEditing ? `0 0 0 ${EDIT_BORDER_W}px ${borderColorEdit}` : undefined,
       }}
     >
+      {/* Thumbnail */}
+      {hasVideo && !miniState.isLoading && miniState.thumbnailUrl && (
+        <img
+          src={miniState.thumbnailUrl}
+          alt=""
+          draggable={false}
+          onContextMenu={(e) => e.preventDefault()}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            zIndex: 0,
+            pointerEvents: 'none',
+            WebkitTouchCallout: 'none',
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
+          }}
+        />
+      )}
+
+      {/* Number label */}
       <div
         style={{
           position: 'absolute',
@@ -112,10 +165,12 @@ export function MiniButton({ miniIndex }: MiniButtonProps) {
           fontSize: '10px',
           fontWeight: 'bold',
           color: textColor,
+          zIndex: 5,
         }}
       >
         {miniIndex + 1}
       </div>
+
       {miniState.isLoading && (
         <div
           style={{
@@ -126,11 +181,76 @@ export function MiniButton({ miniIndex }: MiniButtonProps) {
             justifyContent: 'center',
             fontSize: '10px',
             color: '#888',
+            zIndex: 1,
           }}
         >
           loading
         </div>
       )}
+
+      {/* Grey base border (all 4 sides, always visible) */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          border: `${BORDER_W}px solid ${borderColorInactive}`,
+          borderRadius,
+          pointerEvents: 'none',
+          zIndex: 6,
+        }}
+      />
+
+      {/* Blue opacity fill — 3 sides: left (bottom→top), top (left→right), right (top→bottom) */}
+      {miniState.opacity > 0 && (
+        <>
+          {/* Left side fill: bottom to top */}
+          {leftFill > 0 && (
+            <div
+              style={{
+                position: 'absolute',
+                left: 0,
+                bottom: 0,
+                width: `${BORDER_W}px`,
+                height: `${leftFill * 100}%`,
+                background: blueColor,
+                pointerEvents: 'none',
+                zIndex: 7,
+              }}
+            />
+          )}
+          {/* Top side fill: left to right */}
+          {topFill > 0 && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                height: `${BORDER_W}px`,
+                width: `${topFill * 100}%`,
+                background: blueColor,
+                pointerEvents: 'none',
+                zIndex: 7,
+              }}
+            />
+          )}
+          {/* Right side fill: top to bottom */}
+          {rightFill > 0 && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                width: `${BORDER_W}px`,
+                height: `${rightFill * 100}%`,
+                background: blueColor,
+                pointerEvents: 'none',
+                zIndex: 7,
+              }}
+            />
+          )}
+        </>
+      )}
+
     </button>
   );
 }

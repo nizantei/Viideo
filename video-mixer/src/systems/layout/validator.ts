@@ -26,8 +26,8 @@ function validateNormalizedRect(rect: NormalizedRect, elementId: string): void {
   if (!isInRange(x)) {
     throw new LayoutValidationError(`Element "${elementId}": rect.x must be between 0 and 1, got ${x}`);
   }
-  if (!isInRange(y)) {
-    throw new LayoutValidationError(`Element "${elementId}": rect.y must be between 0 and 1, got ${y}`);
+  if (!isInRange(y, 0, 1.1)) {
+    throw new LayoutValidationError(`Element "${elementId}": rect.y must be between 0 and 1.1, got ${y}`);
   }
   if (!isInRange(w)) {
     throw new LayoutValidationError(`Element "${elementId}": rect.w must be between 0 and 1, got ${w}`);

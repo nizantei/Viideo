@@ -1,0 +1,4 @@
+{
+  "canvas": { "minZoom": 1.0, "maxZoom": 3.0, "speed": 1.0 },
+  "video": { "minZoom": 1.0, "maxZoom": 5.0, "speed": 1.0 }
+}

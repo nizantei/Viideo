@@ -84,7 +84,8 @@ export function useGlobalCrossfaderGesture() {
         const clampedValue = Math.max(0, Math.min(1, newValue));
 
         // Dispatch update
-        dispatch({ type: 'SET_CROSSFADER', value: clampedValue });
+        // Crossfader removed - this hook is deprecated
+        void clampedValue;
       }
     };
 

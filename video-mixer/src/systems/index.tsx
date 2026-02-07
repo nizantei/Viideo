@@ -9,6 +9,9 @@ import { ThemeProvider } from './theme';
 import { TypographyProvider } from './typography';
 import { AnimationProvider } from './animations';
 import { SpacingProvider } from './spacing';
+import { ZoomProvider } from './zoom';
+import { BlendConfigProvider } from './blendConfig';
+import { PanelsProvider } from './panels';
 
 /**
  * UIConfigProvider wraps all config systems
@@ -21,7 +24,13 @@ export function UIConfigProvider({ children }: { children: React.ReactNode }) {
         <TypographyProvider>
           <AnimationProvider>
             <SpacingProvider>
-              {children}
+              <ZoomProvider>
+                <BlendConfigProvider>
+                  <PanelsProvider>
+                    {children}
+                  </PanelsProvider>
+                </BlendConfigProvider>
+              </ZoomProvider>
             </SpacingProvider>
           </AnimationProvider>
         </TypographyProvider>
@@ -36,3 +45,6 @@ export * from './theme';
 export * from './typography';
 export * from './animations';
 export * from './spacing';
+export * from './zoom';
+export * from './blendConfig';
+export * from './panels';

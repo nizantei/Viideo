@@ -21,3 +21,26 @@ export function getMiniGroup(miniIndex: MiniIndex): 'left' | 'right' {
 export function getMiniZIndex(miniIndex: MiniIndex): number {
   return miniIndex + 1;
 }
+
+/**
+ * Calculate the max effective opacity of any loaded layer below the target index.
+ * Used to determine if blend modes would be blending against black.
+ */
+export function calculateBelowContentAlpha(
+  minis: readonly MiniState[],
+  targetIndex: number,
+  groups: { left: GroupState; right: GroupState }
+): number {
+  let maxAlpha = 0;
+  for (let i = 0; i < targetIndex; i++) {
+    const mini = minis[i];
+    if (mini.videoId !== null && !mini.isLoading) {
+      const group = getMiniGroup(i as MiniIndex);
+      const finalOpacity = calculateFinalOpacity(mini, groups[group]);
+      if (finalOpacity > maxAlpha) {
+        maxAlpha = finalOpacity;
+      }
+    }
+  }
+  return maxAlpha;
+}

@@ -1,0 +1,93 @@
+{
+  "_description": "Blend Mode Configuration. Controls how blend modes look when compositing video layers. Edit values and refresh to see changes.",
+  "protection": {
+    "_description": "Prevents blend modes from going black when there's no content below a layer.",
+    "_how_it_works": "When a video has a dark-sensitive blend mode (like Multiply or Color Burn) and nothing is below it, it would normally blend against the black background and turn black. This system cross-fades between a normal (unblended) copy of the video and the blended version based on how much content exists below.",
+    "enabled": true,
+    "_enabled": "true = protection active (prevents black). false = raw blend modes (can go black against empty background).",
+    "minBlendStrength": 0.3,
+    "_minBlendStrength": "0.0 to 1.0 — The minimum amount of blend effect visible, even when nothing is below. Higher = more blend visible. 0.0 = blend invisible when solo (full protection). 0.3 = some blend visible when solo. 0.5 = half blend visible when solo. 1.0 = no protection at all (raw blend mode).",
+    "rampPower": 0.5,
+    "_rampPower": "Controls how quickly the blend reaches full strength as content fades in below. 0.3 = very quick ramp. 0.5 = moderate ramp. 1.0 = linear. 2.0 = slow ramp.",
+    "darkSensitiveModes": [
+      "MULTIPLY",
+      "COLOR_BURN",
+      "HARD_MIX",
+      "OVERLAY",
+      "SOFT_LIGHT",
+      "LINEAR_BURN",
+      "SUBTRACT"
+    ],
+    "_darkSensitiveModes": "Which blend modes get the black-protection treatment. Only these modes cross-fade. Others (Screen, Difference, etc.) always use raw blending."
+  },
+  "modes": {
+    "_description": "Per-mode settings. 'intensity' controls how strong each blend mode appears via opacity. 1.0 = normal full strength. Below 1 = subtler effect. Above 1 is clamped to 1.",
+    "NORMAL": {
+      "intensity": 1.0
+    },
+    "SCREEN": {
+      "intensity": 1.0,
+      "_note": "Lightens. Good for glowing/bright overlays."
+    },
+    "ADD": {
+      "intensity": 1.0,
+      "_note": "Strong lighten. Adds pixel values."
+    },
+    "MULTIPLY": {
+      "intensity": 1.0,
+      "_note": "Darkens. Dark-sensitive (protected)."
+    },
+    "OVERLAY": {
+      "intensity": 1.0,
+      "_note": "Contrast boost. Dark-sensitive (protected)."
+    },
+    "SOFT_LIGHT": {
+      "intensity": 1.0,
+      "_note": "Gentle contrast. Dark-sensitive (protected)."
+    },
+    "DIFFERENCE": {
+      "intensity": 1.0,
+      "_note": "Inverts similar colors. Psychedelic."
+    },
+    "EXCLUSION": {
+      "intensity": 1.0,
+      "_note": "Softer difference. Muted inversion."
+    },
+    "COLOR_DODGE": {
+      "intensity": 1.0,
+      "_note": "Strong lighten. Blows out highlights."
+    },
+    "COLOR_BURN": {
+      "intensity": 1.0,
+      "_note": "Strong darken. Dark-sensitive (protected)."
+    },
+    "HARD_MIX": {
+      "intensity": 1.0,
+      "_note": "Extreme contrast. Dark-sensitive (protected)."
+    },
+    "LINEAR_BURN": {
+      "intensity": 1.0,
+      "_note": "Intense darken. a+b-1. Dark-sensitive (protected)."
+    },
+    "SUBTRACT": {
+      "intensity": 1.0,
+      "_note": "Subtracts blend from base. Dark-sensitive (protected)."
+    },
+    "LINEAR_DODGE": {
+      "intensity": 1.0,
+      "_note": "Same as Add. Brightens highlights."
+    },
+    "DIVIDE": {
+      "intensity": 1.0,
+      "_note": "Divides base by blend. Extreme lighten."
+    },
+    "VIVID_LIGHT": {
+      "intensity": 1.0,
+      "_note": "Color burn or dodge based on blend brightness."
+    },
+    "PIN_LIGHT": {
+      "intensity": 1.0,
+      "_note": "Replaces dark/light pixels based on blend value."
+    }
+  }
+}

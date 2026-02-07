@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useMixer } from '../context/MixerContext';
 import { MiniVideo } from './MiniVideo';
-import { getMiniGroup } from '../utils/opacity';
+import { getMiniGroup, calculateBelowContentAlpha } from '../utils/opacity';
 import { getVideos } from '../data/videos';
 import { Video } from '../types';
 
@@ -42,6 +42,9 @@ export function VideoMixer() {
         const groupOpacity = state.groups[group].opacity;
         const videoUrl = getVideoUrl(miniState.videoId);
 
+        // Calculate how much visible content exists below this layer
+        const belowAlpha = calculateBelowContentAlpha(state.minis, miniIndex, state.groups);
+
         return (
           <MiniVideo
             key={miniIndex}
@@ -49,6 +52,7 @@ export function VideoMixer() {
             miniState={miniState}
             groupOpacity={groupOpacity}
             videoUrl={videoUrl}
+            belowAlpha={belowAlpha}
           />
         );
       })}

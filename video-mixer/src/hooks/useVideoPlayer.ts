@@ -1,5 +1,6 @@
 import { useRef, useEffect, useCallback, useState } from 'react';
 import Hls from 'hls.js';
+import { CachingLoader } from '../services/hls/CachingLoader';
 
 interface UseVideoPlayerOptions {
   hlsUrl: string | null;
@@ -102,8 +103,9 @@ export function useVideoPlayer({
       const hls = new Hls({
         enableWorker: true,
         lowLatencyMode: false,
-        maxBufferLength: 30,
-        maxMaxBufferLength: 60,
+        maxBufferLength: 600,
+        maxMaxBufferLength: 600,
+        fLoader: CachingLoader as any,
       });
 
       hls.loadSource(hlsUrl);

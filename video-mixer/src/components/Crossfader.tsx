@@ -4,7 +4,7 @@ import { useMixer } from '../context/MixerContext';
 import { useLayoutElement, useColor, useBorderRadius, useOpacity } from '../systems';
 
 export function Crossfader() {
-  const { state, dispatch } = useMixer();
+  const { state } = useMixer();
   const { style } = useLayoutElement('crossfader');
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -26,7 +26,8 @@ export function Crossfader() {
       const rect = track.getBoundingClientRect();
       const relativeX = x - rect.left;
       const value = Math.min(Math.max(relativeX / rect.width, 0), 1);
-      dispatch({ type: 'SET_CROSSFADER', value });
+      // Crossfader removed - groups are now fixed at 1.0
+      void value;
     },
     { axis: 'x' }
   );

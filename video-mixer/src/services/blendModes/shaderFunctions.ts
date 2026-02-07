@@ -77,6 +77,54 @@ vec3 blendHardMix(vec3 base, vec3 blend) {
   return result;
 }
 
+// Linear Burn blend (a + b - 1)
+vec3 blendLinearBurn(vec3 base, vec3 blend) {
+  return max(base + blend - 1.0, 0.0);
+}
+
+// Subtract blend (a - b)
+vec3 blendSubtract(vec3 base, vec3 blend) {
+  return max(base - blend, 0.0);
+}
+
+// Linear Dodge / Add blend (a + b)
+vec3 blendLinearDodge(vec3 base, vec3 blend) {
+  return min(base + blend, 1.0);
+}
+
+// Divide blend (a / b)
+vec3 blendDivide(vec3 base, vec3 blend) {
+  vec3 result;
+  result.r = blend.r <= 0.0 ? 1.0 : min(base.r / blend.r, 1.0);
+  result.g = blend.g <= 0.0 ? 1.0 : min(base.g / blend.g, 1.0);
+  result.b = blend.b <= 0.0 ? 1.0 : min(base.b / blend.b, 1.0);
+  return result;
+}
+
+// Vivid Light blend (dodge if blend > 0.5, burn if blend < 0.5)
+vec3 blendVividLight(vec3 base, vec3 blend) {
+  vec3 result;
+  result.r = blend.r <= 0.5
+    ? (blend.r <= 0.0 ? 0.0 : max(1.0 - (1.0 - base.r) / (2.0 * blend.r), 0.0))
+    : (blend.r >= 1.0 ? 1.0 : min(base.r / (2.0 * (1.0 - blend.r)), 1.0));
+  result.g = blend.g <= 0.5
+    ? (blend.g <= 0.0 ? 0.0 : max(1.0 - (1.0 - base.g) / (2.0 * blend.g), 0.0))
+    : (blend.g >= 1.0 ? 1.0 : min(base.g / (2.0 * (1.0 - blend.g)), 1.0));
+  result.b = blend.b <= 0.5
+    ? (blend.b <= 0.0 ? 0.0 : max(1.0 - (1.0 - base.b) / (2.0 * blend.b), 0.0))
+    : (blend.b >= 1.0 ? 1.0 : min(base.b / (2.0 * (1.0 - blend.b)), 1.0));
+  return result;
+}
+
+// Pin Light blend (darken if blend < 0.5, lighten if blend > 0.5)
+vec3 blendPinLight(vec3 base, vec3 blend) {
+  vec3 result;
+  result.r = blend.r <= 0.5 ? min(base.r, 2.0 * blend.r) : max(base.r, 2.0 * blend.r - 1.0);
+  result.g = blend.g <= 0.5 ? min(base.g, 2.0 * blend.g) : max(base.g, 2.0 * blend.g - 1.0);
+  result.b = blend.b <= 0.5 ? min(base.b, 2.0 * blend.b) : max(base.b, 2.0 * blend.b - 1.0);
+  return result;
+}
+
 // Apply blend mode based on integer mode
 vec3 applyBlendMode(vec3 base, vec3 blend, int mode) {
   if (mode == 0) return blendNormal(base, blend);
@@ -90,6 +138,12 @@ vec3 applyBlendMode(vec3 base, vec3 blend, int mode) {
   if (mode == 8) return blendColorDodge(base, blend);
   if (mode == 9) return blendColorBurn(base, blend);
   if (mode == 10) return blendHardMix(base, blend);
+  if (mode == 11) return blendLinearBurn(base, blend);
+  if (mode == 12) return blendSubtract(base, blend);
+  if (mode == 13) return blendLinearDodge(base, blend);
+  if (mode == 14) return blendDivide(base, blend);
+  if (mode == 15) return blendVividLight(base, blend);
+  if (mode == 16) return blendPinLight(base, blend);
   return blend; // fallback to normal
 }
 `;
@@ -107,4 +161,10 @@ export const BLEND_MODE_TO_SHADER_INT: Record<BlendMode, number> = {
   [BlendMode.COLOR_DODGE]: 8,
   [BlendMode.COLOR_BURN]: 9,
   [BlendMode.HARD_MIX]: 10,
+  [BlendMode.LINEAR_BURN]: 11,
+  [BlendMode.SUBTRACT]: 12,
+  [BlendMode.LINEAR_DODGE]: 13,
+  [BlendMode.DIVIDE]: 14,
+  [BlendMode.VIVID_LIGHT]: 15,
+  [BlendMode.PIN_LIGHT]: 16,
 };

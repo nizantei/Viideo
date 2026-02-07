@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { useMixer } from '../context/MixerContext';
 import { useLandscapeLock } from '../hooks/useLandscapeLock';
-import { useGlobalCrossfaderGesture } from '../hooks/useGlobalCrossfaderGesture';
+import { useCanvasZoom } from '../hooks/useCanvasZoom';
 import { VideoMixer } from './VideoMixer';
 import { MiniControls } from './MiniControls';
 import { TapToLoad } from './TapToLoad';
@@ -9,6 +9,9 @@ import { LibraryOverlay } from './LibraryOverlay';
 import { BlendModeIndicator } from './BlendModeIndicator';
 import { BlendModeSelector } from './BlendModeSelector';
 import { FullScreenButton } from './FullscreenButton';
+import { ExitEditButton } from './ExitEditButton';
+import { SettingsButton } from './SettingsButton';
+import { SettingsPanel } from './SettingsPanel';
 import styles from '../styles/App.module.css';
 
 export default function App() {
@@ -16,9 +19,7 @@ export default function App() {
   const { isLandscape } = useLandscapeLock();
   const containerRef = useRef<HTMLDivElement>(null);
   const fullScreenActivatedTimeRef = useRef<number>(0);
-
-  // Enable global crossfader gesture
-  useGlobalCrossfaderGesture();
+  const { bind: canvasGestureBind } = useCanvasZoom();
 
   // Detect if device is Android
   const isAndroid = /Android/i.test(navigator.userAgent);
@@ -187,7 +188,17 @@ export default function App() {
       onClick={handleVideoAreaTap}
     >
       {/* Video mixer */}
-      <div className={styles.canvas}>
+      <div
+        {...(state.editMode.active ? {} : canvasGestureBind())}
+        className={styles.canvas}
+        style={{
+          touchAction: 'none',
+          transform: state.canvasZoom > 1
+            ? `scale(${state.canvasZoom}) translate(${state.canvasPanX / state.canvasZoom}px, ${state.canvasPanY / state.canvasZoom}px)`
+            : undefined,
+          transformOrigin: 'center center',
+        }}
+      >
         <VideoMixer />
       </div>
 
@@ -196,6 +207,8 @@ export default function App() {
         <MiniControls />
         <TapToLoad />
         <FullScreenButton />
+        <ExitEditButton />
+        <SettingsButton />
       </div>
 
       {/* Blend mode indicator (only shows in edit mode) */}
@@ -206,6 +219,9 @@ export default function App() {
 
       {/* Blend mode selector modal */}
       <BlendModeSelector />
+
+      {/* Settings panel */}
+      <SettingsPanel />
     </div>
   );
 }

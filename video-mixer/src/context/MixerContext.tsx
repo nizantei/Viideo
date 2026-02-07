@@ -1,13 +1,15 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { MixerState, MixerAction, MiniState } from '../types';
-import { calculateGroupOpacity } from '../utils/opacity';
+import React, { createContext, useContext, useReducer, useEffect, useRef, ReactNode } from 'react';
+import { MixerState, MixerAction, MiniState, MixSnapshot } from '../types';
 import { BlendMode } from '../services/blendModes';
+
+const STORAGE_KEY = 'viideo-mixer-state';
 
 const initialMiniState: MiniState = {
   videoId: null,
+  thumbnailUrl: null,
   isPlaying: false,
   isLoading: false,
-  opacity: 1.0,
+  opacity: 0,
   zoom: 1.0,
   panX: 0,
   panY: 0,
@@ -28,10 +30,13 @@ const initialState: MixerState = {
     { ...initialMiniState },
   ],
   groups: {
-    left: { opacity: 0.5 },
-    right: { opacity: 0.5 },
+    left: { opacity: 1.0 },
+    right: { opacity: 1.0 },
   },
   crossfader: 0.5,
+  canvasZoom: 1.0,
+  canvasPanX: 0,
+  canvasPanY: 0,
   editMode: {
     active: false,
     targetMini: null,
@@ -45,9 +50,41 @@ const initialState: MixerState = {
     isOpen: false,
     targetMini: null,
   },
+  settings: {
+    isOpen: false,
+  },
   isInteractionEnabled: false,
   isFullScreenMode: false,
 };
+
+function applyMixSnapshot(state: MixerState, snapshot: MixSnapshot): MixerState {
+  const newMinis = state.minis.map((_mini, i) => {
+    const saved = snapshot.minis[i];
+    if (!saved) return { ...initialMiniState };
+    return {
+      ...initialMiniState,
+      videoId: saved.videoId,
+      thumbnailUrl: saved.thumbnailUrl ?? null,
+      isPlaying: saved.videoId !== null,
+      isLoading: saved.videoId !== null,
+      opacity: saved.opacity ?? 1.0,
+      zoom: saved.zoom ?? 1.0,
+      panX: saved.panX ?? 0,
+      panY: saved.panY ?? 0,
+      blendMode: (saved.blendMode as BlendMode) || BlendMode.NORMAL,
+      swinging: saved.swinging ?? initialMiniState.swinging,
+    };
+  }) as [MiniState, MiniState, MiniState, MiniState];
+
+  return {
+    ...state,
+    minis: newMinis,
+    canvasZoom: snapshot.canvasZoom ?? 1.0,
+    canvasPanX: snapshot.canvasPanX ?? 0,
+    canvasPanY: snapshot.canvasPanY ?? 0,
+    settings: { isOpen: false },
+  };
+}
 
 function mixerReducer(state: MixerState, action: MixerAction): MixerState {
   switch (action.type) {
@@ -56,8 +93,15 @@ function mixerReducer(state: MixerState, action: MixerAction): MixerState {
       newMinis[action.miniIndex] = {
         ...newMinis[action.miniIndex],
         videoId: action.videoId,
+        thumbnailUrl: action.thumbnailUrl,
         isPlaying: true,
       };
+      return { ...state, minis: newMinis };
+    }
+
+    case 'CLEAR_MINI_VIDEO': {
+      const newMinis = [...state.minis] as typeof state.minis;
+      newMinis[action.miniIndex] = { ...initialMiniState };
       return { ...state, minis: newMinis };
     }
 
@@ -175,17 +219,6 @@ function mixerReducer(state: MixerState, action: MixerAction): MixerState {
       return { ...state, minis: newMinis };
     }
 
-    case 'SET_CROSSFADER': {
-      return {
-        ...state,
-        crossfader: action.value,
-        groups: {
-          left: { opacity: calculateGroupOpacity(action.value, 'left') },
-          right: { opacity: calculateGroupOpacity(action.value, 'right') },
-        },
-      };
-    }
-
     case 'OPEN_LIBRARY': {
       return {
         ...state,
@@ -227,6 +260,18 @@ function mixerReducer(state: MixerState, action: MixerAction): MixerState {
       };
     }
 
+    case 'SET_CANVAS_ZOOM': {
+      return { ...state, canvasZoom: action.zoom };
+    }
+
+    case 'SET_CANVAS_PAN': {
+      return { ...state, canvasPanX: action.panX, canvasPanY: action.panY };
+    }
+
+    case 'RESET_CANVAS_ZOOM': {
+      return { ...state, canvasZoom: 1.0, canvasPanX: 0, canvasPanY: 0 };
+    }
+
     case 'ENABLE_INTERACTION': {
       return { ...state, isInteractionEnabled: true };
     }
@@ -237,6 +282,18 @@ function mixerReducer(state: MixerState, action: MixerAction): MixerState {
 
     case 'EXIT_FULLSCREEN_MODE': {
       return { ...state, isFullScreenMode: false };
+    }
+
+    case 'OPEN_SETTINGS': {
+      return { ...state, settings: { isOpen: true } };
+    }
+
+    case 'CLOSE_SETTINGS': {
+      return { ...state, settings: { isOpen: false } };
+    }
+
+    case 'LOAD_MIX_STATE': {
+      return applyMixSnapshot(state, action.snapshot);
     }
 
     default:
@@ -251,8 +308,56 @@ interface MixerContextValue {
 
 const MixerContext = createContext<MixerContextValue | null>(null);
 
+function stateToSnapshot(state: MixerState): MixSnapshot {
+  return {
+    version: 1,
+    minis: state.minis.map((m) => ({
+      videoId: m.videoId,
+      thumbnailUrl: m.thumbnailUrl,
+      opacity: m.opacity,
+      zoom: m.zoom,
+      panX: m.panX,
+      panY: m.panY,
+      blendMode: m.blendMode,
+      swinging: { ...m.swinging },
+    })),
+    canvasZoom: state.canvasZoom,
+    canvasPanX: state.canvasPanX,
+    canvasPanY: state.canvasPanY,
+  };
+}
+
+function loadSavedState(): MixerState {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const snapshot = JSON.parse(saved) as MixSnapshot;
+      if (snapshot.minis && Array.isArray(snapshot.minis) && snapshot.minis.length === 4) {
+        return applyMixSnapshot(initialState, snapshot);
+      }
+    }
+  } catch {
+    // Ignore corrupt data
+  }
+  return initialState;
+}
+
 export function MixerProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(mixerReducer, initialState);
+  const [state, dispatch] = useReducer(mixerReducer, undefined, loadSavedState);
+  const saveTimerRef = useRef<number>(0);
+
+  // Save state to localStorage on changes (debounced to avoid thrashing during fader drags)
+  useEffect(() => {
+    clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = window.setTimeout(() => {
+      try {
+        const snapshot = stateToSnapshot(state);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+      } catch {
+        // Storage full or unavailable
+      }
+    }, 500);
+  }, [state]);
 
   return (
     <MixerContext.Provider value={{ state, dispatch }}>

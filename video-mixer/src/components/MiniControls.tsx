@@ -1,7 +1,6 @@
 import { useMixer } from '../context/MixerContext';
 import { MiniButton } from './MiniButton';
 import { MiniFader } from './MiniFader';
-import { Crossfader } from './Crossfader';
 
 export function MiniControls() {
   const { state } = useMixer();
@@ -22,7 +21,6 @@ export function MiniControls() {
       <MiniFader miniIndex={1} />
       <MiniFader miniIndex={2} />
       <MiniFader miniIndex={3} />
-      <Crossfader />
     </>
   );
 }

@@ -1,0 +1,15 @@
+{
+  "_description": "Side Panel Configuration. Controls the width and appearance of the library and blend mode side panels.",
+  "library": {
+    "folderPanelWidthPercent": 18,
+    "_folderPanelWidthPercent": "Width of the left folder panel as a percentage of screen width.",
+    "videoPanelWidthPercent": 22,
+    "_videoPanelWidthPercent": "Width of the right video panel as a percentage of screen width."
+  },
+  "blendModeSelector": {
+    "panelWidthPercent": 20,
+    "_panelWidthPercent": "Width of the blend mode selector panel as a percentage of screen width."
+  },
+  "panelBackground": "rgba(0, 0, 0, 0.85)",
+  "_panelBackground": "Background color for all side panels. Use rgba for transparency so video shows through."
+}

@@ -2,16 +2,13 @@ import React from 'react';
 import { useMixer } from '../context/MixerContext';
 import { useLayoutElement, useColor, useBorderRadius } from '../systems';
 
-export function FullScreenButton() {
+export function SettingsButton() {
   const { state, dispatch } = useMixer();
-  const { style } = useLayoutElement('fullScreenButton');
-
-  // Config-driven styling
+  const { style } = useLayoutElement('settingsButton');
   const borderRadius = useBorderRadius('round');
-  const bgColor = '#666666'; // Grey color
   const iconColor = useColor('textPrimary');
 
-  // Hide button in full-screen mode or edit mode
+  // Hide in fullscreen mode or edit mode
   if (state.isFullScreenMode || state.editMode.active) {
     return null;
   }
@@ -22,20 +19,20 @@ export function FullScreenButton() {
 
   const handleTouchEnd = (e: React.TouchEvent) => {
     e.stopPropagation();
-    e.preventDefault(); // Prevent synthetic click event
-    dispatch({ type: 'TOGGLE_FULLSCREEN_MODE' });
+    e.preventDefault();
+    dispatch({ type: 'OPEN_SETTINGS' });
   };
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    dispatch({ type: 'TOGGLE_FULLSCREEN_MODE' });
+    dispatch({ type: 'OPEN_SETTINGS' });
   };
 
   return (
     <button
       style={{
         ...style,
-        backgroundColor: bgColor,
+        backgroundColor: '#555',
         border: 'none',
         borderRadius,
         display: 'flex',
@@ -49,9 +46,10 @@ export function FullScreenButton() {
       onTouchEnd={handleTouchEnd}
       onClick={handleClick}
     >
+      {/* Gear icon */}
       <svg
-        width="60%"
-        height="60%"
+        width="55%"
+        height="55%"
         viewBox="0 0 24 24"
         fill="none"
         stroke={iconColor}
@@ -59,7 +57,8 @@ export function FullScreenButton() {
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+        <circle cx="12" cy="12" r="3" />
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
       </svg>
     </button>
   );

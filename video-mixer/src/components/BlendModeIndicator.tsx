@@ -10,12 +10,15 @@ export function BlendModeIndicator() {
   const blendMode = state.minis[targetMini].blendMode;
   const metadata = getBlendModeMetadata(blendMode);
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
     dispatch({ type: 'OPEN_BLEND_MODE_SELECTOR', miniIndex: targetMini });
   };
 
   return (
     <button
+      onTouchEnd={handleClick}
       onClick={handleClick}
       style={{
         position: 'fixed',
@@ -30,16 +33,8 @@ export function BlendModeIndicator() {
         fontWeight: '600',
         cursor: 'pointer',
         zIndex: 100,
-        transition: 'all 0.2s ease',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = '#444';
-        e.currentTarget.style.transform = 'scale(1.05)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = '#333';
-        e.currentTarget.style.transform = 'scale(1)';
+        touchAction: 'manipulation',
       }}
     >
       {metadata.displayName}
