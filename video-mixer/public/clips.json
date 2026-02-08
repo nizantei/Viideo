@@ -4,7 +4,7 @@
   "_folders": "Available folders: ratio-3-1 (for 3:1 aspect ratio videos) and ratio-4-1 (for 4:1 aspect ratio videos)",
   "version": "1.0.0",
   "customerid": "customer-da4812z845ijzly5",
-  "count": 36,
+  "count": 98,
   "clips": [
     {
       "title": "Clip 1",
@@ -257,6 +257,440 @@
       "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/8d53632fddf94d29cf2657d58be9e8bf/manifest/video.m3u8",
       "videoId": "8d53632fddf94d29cf2657d58be9e8bf",
       "id": "clip-36"
+    },
+    {
+      "title": "Clip 37",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/3702db0759b79edadf5759aa2ae2c373/manifest/video.m3u8",
+      "videoId": "3702db0759b79edadf5759aa2ae2c373",
+      "id": "clip-37"
+    },
+    {
+      "title": "Clip 38",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/294a2cb9966ad7700f06c2605f8a2a78/manifest/video.m3u8",
+      "videoId": "294a2cb9966ad7700f06c2605f8a2a78",
+      "id": "clip-38"
+    },
+    {
+      "title": "Clip 39",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/1d77e5691958e046a49c35eac1b9ed11/manifest/video.m3u8",
+      "videoId": "1d77e5691958e046a49c35eac1b9ed11",
+      "id": "clip-39"
+    },
+    {
+      "title": "Clip 40",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/6420f7b3e5c445a87d9d3a78b705d0fc/manifest/video.m3u8",
+      "videoId": "6420f7b3e5c445a87d9d3a78b705d0fc",
+      "id": "clip-40"
+    },
+    {
+      "title": "Clip 41",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/7ff001e9ccb2f068a6bc460d047c77b5/manifest/video.m3u8",
+      "videoId": "7ff001e9ccb2f068a6bc460d047c77b5",
+      "id": "clip-41"
+    },
+    {
+      "title": "Clip 42",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/229069c1d5554f383332cf497ae93c63/manifest/video.m3u8",
+      "videoId": "229069c1d5554f383332cf497ae93c63",
+      "id": "clip-42"
+    },
+    {
+      "title": "Clip 43",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/230f42f8075156730f7d483f3d444e84/manifest/video.m3u8",
+      "videoId": "230f42f8075156730f7d483f3d444e84",
+      "id": "clip-43"
+    },
+    {
+      "title": "Clip 44",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/9b0d663712f22da2c0736d62488a241f/manifest/video.m3u8",
+      "videoId": "9b0d663712f22da2c0736d62488a241f",
+      "id": "clip-44"
+    },
+    {
+      "title": "Clip 47",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/81a32efcda85d12f70ca8b478e4579ed/manifest/video.m3u8",
+      "videoId": "81a32efcda85d12f70ca8b478e4579ed",
+      "id": "clip-47"
+    },
+    {
+      "title": "Clip 48",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/b689ad8710e5189de770a3d7e0cbc317/manifest/video.m3u8",
+      "videoId": "b689ad8710e5189de770a3d7e0cbc317",
+      "id": "clip-48"
+    },
+    {
+      "title": "Clip 49",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/383e58524be2b087bac44475bbf2529b/manifest/video.m3u8",
+      "videoId": "383e58524be2b087bac44475bbf2529b",
+      "id": "clip-49"
+    },
+    {
+      "title": "Clip 50",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/de7703668ac54d573bd9180aa61ac444/manifest/video.m3u8",
+      "videoId": "de7703668ac54d573bd9180aa61ac444",
+      "id": "clip-50"
+    },
+    {
+      "title": "Clip 51",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/3db7ba5369bb73d47cc6fc13b52600ed/manifest/video.m3u8",
+      "videoId": "3db7ba5369bb73d47cc6fc13b52600ed",
+      "id": "clip-51"
+    },
+    {
+      "title": "Clip 52",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/845e10bcfe22369eb1e17e6c64e979d7/manifest/video.m3u8",
+      "videoId": "845e10bcfe22369eb1e17e6c64e979d7",
+      "id": "clip-52"
+    },
+    {
+      "title": "Clip 53",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/5fbb4393a26806b07ccc4d34e8de865f/manifest/video.m3u8",
+      "videoId": "5fbb4393a26806b07ccc4d34e8de865f",
+      "id": "clip-53"
+    },
+    {
+      "title": "Clip 56",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/f443dc527c498e2ee55a9cb58dc2341a/manifest/video.m3u8",
+      "videoId": "f443dc527c498e2ee55a9cb58dc2341a",
+      "id": "clip-56"
+    },
+    {
+      "title": "Clip 57",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/6dd646c1aea73a7740d82fd3d92bf1a4/manifest/video.m3u8",
+      "videoId": "6dd646c1aea73a7740d82fd3d92bf1a4",
+      "id": "clip-57"
+    },
+    {
+      "title": "Clip 58",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/4df8a36e9f6de14a8133374eaffc2329/manifest/video.m3u8",
+      "videoId": "4df8a36e9f6de14a8133374eaffc2329",
+      "id": "clip-58"
+    },
+    {
+      "title": "Clip 59",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/bb47a0cf71e87c1dc8a8fa80637df3f4/manifest/video.m3u8",
+      "videoId": "bb47a0cf71e87c1dc8a8fa80637df3f4",
+      "id": "clip-59"
+    },
+    {
+      "title": "Clip 60",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/e71b16a7d58fded13ce8fde9260b6c9e/manifest/video.m3u8",
+      "videoId": "e71b16a7d58fded13ce8fde9260b6c9e",
+      "id": "clip-60"
+    },
+    {
+      "title": "Clip 61",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/ffe711e11d79baedb5697d66eddee3bf/manifest/video.m3u8",
+      "videoId": "ffe711e11d79baedb5697d66eddee3bf",
+      "id": "clip-61"
+    },
+    {
+      "title": "Clip 62",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/8fca34fd0acbc74454289d04f0d85107/manifest/video.m3u8",
+      "videoId": "8fca34fd0acbc74454289d04f0d85107",
+      "id": "clip-62"
+    },
+    {
+      "title": "Clip 63",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/daebd1cfb9f00790499fe1532d0cbe03/manifest/video.m3u8",
+      "videoId": "daebd1cfb9f00790499fe1532d0cbe03",
+      "id": "clip-63"
+    },
+    {
+      "title": "Clip 64",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/ee6a4dce953bfa6a69d3824b159face2/manifest/video.m3u8",
+      "videoId": "ee6a4dce953bfa6a69d3824b159face2",
+      "id": "clip-64"
+    },
+    {
+      "title": "Clip 65",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/1668457fd29b7bbe4dc7a5bdcd016222/manifest/video.m3u8",
+      "videoId": "1668457fd29b7bbe4dc7a5bdcd016222",
+      "id": "clip-65"
+    },
+    {
+      "title": "Clip 66",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/14d3f3f5bd22b0eff9be0a658c1a972b/manifest/video.m3u8",
+      "videoId": "14d3f3f5bd22b0eff9be0a658c1a972b",
+      "id": "clip-66"
+    },
+    {
+      "title": "Clip 67",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/643279b602742ee8ef7d61c360bea383/manifest/video.m3u8",
+      "videoId": "643279b602742ee8ef7d61c360bea383",
+      "id": "clip-67"
+    },
+    {
+      "title": "Clip 68",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/e27b7882bb8fbf9259820626224bd754/manifest/video.m3u8",
+      "videoId": "e27b7882bb8fbf9259820626224bd754",
+      "id": "clip-68"
+    },
+    {
+      "title": "Clip 69",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/ca195536ec707a9174a7dd5a2becdb68/manifest/video.m3u8",
+      "videoId": "ca195536ec707a9174a7dd5a2becdb68",
+      "id": "clip-69"
+    },
+    {
+      "title": "Clip 70",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/1547952199e5862b36a862b482273db9/manifest/video.m3u8",
+      "videoId": "1547952199e5862b36a862b482273db9",
+      "id": "clip-70"
+    },
+    {
+      "title": "Clip 71",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/26bfe31cc8bc7b45203c5f08ef1c713b/manifest/video.m3u8",
+      "videoId": "26bfe31cc8bc7b45203c5f08ef1c713b",
+      "id": "clip-71"
+    },
+    {
+      "title": "Clip 72",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/f646eaede57f758ada6e1a4e1d9bac38/manifest/video.m3u8",
+      "videoId": "f646eaede57f758ada6e1a4e1d9bac38",
+      "id": "clip-72"
+    },
+    {
+      "title": "Clip 73",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/d0fffd1e964e435340e889c240849831/manifest/video.m3u8",
+      "videoId": "d0fffd1e964e435340e889c240849831",
+      "id": "clip-73"
+    },
+    {
+      "title": "Clip 74",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/a40c6dc1cab40dab7380cbd75c5cf3e1/manifest/video.m3u8",
+      "videoId": "a40c6dc1cab40dab7380cbd75c5cf3e1",
+      "id": "clip-74"
+    },
+    {
+      "title": "Clip 75",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/c592cb1318909820074ba8c12d25b538/manifest/video.m3u8",
+      "videoId": "c592cb1318909820074ba8c12d25b538",
+      "id": "clip-75"
+    },
+    {
+      "title": "Clip 76",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/8d516e5a0d1110348f25a403c0084cb9/manifest/video.m3u8",
+      "videoId": "8d516e5a0d1110348f25a403c0084cb9",
+      "id": "clip-76"
+    },
+    {
+      "title": "Clip 77",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/7eb3e8167dd466bbfef81ba12bc59f6f/manifest/video.m3u8",
+      "videoId": "7eb3e8167dd466bbfef81ba12bc59f6f",
+      "id": "clip-77"
+    },
+    {
+      "title": "Clip 78",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/94e16b4493104431e323dc066a96bb0a/manifest/video.m3u8",
+      "videoId": "94e16b4493104431e323dc066a96bb0a",
+      "id": "clip-78"
+    },
+    {
+      "title": "Clip 79",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/e2d5dde0e013d1cabd183568b1ccb87a/manifest/video.m3u8",
+      "videoId": "e2d5dde0e013d1cabd183568b1ccb87a",
+      "id": "clip-79"
+    },
+    {
+      "title": "Clip 80",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/6609c574d6a13ddfe51747882086cd72/manifest/video.m3u8",
+      "videoId": "6609c574d6a13ddfe51747882086cd72",
+      "id": "clip-80"
+    },
+    {
+      "title": "Clip 81",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/e50e4ba76ab602532e278d155d140a8c/manifest/video.m3u8",
+      "videoId": "e50e4ba76ab602532e278d155d140a8c",
+      "id": "clip-81"
+    },
+    {
+      "title": "Clip 82",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/b325b71b2832ca0439c6d55cd7741e0c/manifest/video.m3u8",
+      "videoId": "b325b71b2832ca0439c6d55cd7741e0c",
+      "id": "clip-82"
+    },
+    {
+      "title": "Clip 83",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/0768939f8ebb281f4643e6a63a7c7b7a/manifest/video.m3u8",
+      "videoId": "0768939f8ebb281f4643e6a63a7c7b7a",
+      "id": "clip-83"
+    },
+    {
+      "title": "Clip 84",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/d43d1a3c4c6342af62cd42398ea56dda/manifest/video.m3u8",
+      "videoId": "d43d1a3c4c6342af62cd42398ea56dda",
+      "id": "clip-84"
+    },
+    {
+      "title": "Clip 85",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/eb0ec885d735a9dd67e0ba6974a68d6a/manifest/video.m3u8",
+      "videoId": "eb0ec885d735a9dd67e0ba6974a68d6a",
+      "id": "clip-85"
+    },
+    {
+      "title": "Clip 86",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/476ac7fa4894fe80b2b364f01133985d/manifest/video.m3u8",
+      "videoId": "476ac7fa4894fe80b2b364f01133985d",
+      "id": "clip-86"
+    },
+    {
+      "title": "Clip 87",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/5e46eb7cdf374582efdba70360c1ee26/manifest/video.m3u8",
+      "videoId": "5e46eb7cdf374582efdba70360c1ee26",
+      "id": "clip-87"
+    },
+    {
+      "title": "Clip 88",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/42c75296e28eee17b7c01981be96ece0/manifest/video.m3u8",
+      "videoId": "42c75296e28eee17b7c01981be96ece0",
+      "id": "clip-88"
+    },
+    {
+      "title": "Clip 89",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/300672a15bcc22e775a6daaae8e925b8/manifest/video.m3u8",
+      "videoId": "300672a15bcc22e775a6daaae8e925b8",
+      "id": "clip-89"
+    },
+    {
+      "title": "Clip 90",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/ebf902ff712cb43ba401ee3b6573fd02/manifest/video.m3u8",
+      "videoId": "ebf902ff712cb43ba401ee3b6573fd02",
+      "id": "clip-90"
+    },
+    {
+      "title": "Clip 91",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/e9836f1e7f167bf7ab25a7ba03c93320/manifest/video.m3u8",
+      "videoId": "e9836f1e7f167bf7ab25a7ba03c93320",
+      "id": "clip-91"
+    },
+    {
+      "title": "Clip 92",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/2085ba2f65da916a96d60815beedb680/manifest/video.m3u8",
+      "videoId": "2085ba2f65da916a96d60815beedb680",
+      "id": "clip-92"
+    },
+    {
+      "title": "Clip 93",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/2d797eb7c7270ae8d871a5f8392187d1/manifest/video.m3u8",
+      "videoId": "2d797eb7c7270ae8d871a5f8392187d1",
+      "id": "clip-93"
+    },
+    {
+      "title": "Clip 94",
+      "folder": "ratio-3-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/9138fb4a77a2177d96c8495f5612b4b3/manifest/video.m3u8",
+      "videoId": "9138fb4a77a2177d96c8495f5612b4b3",
+      "id": "clip-94"
+    },
+    {
+      "title": "Clip 95",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/30e6cc041111537c9cecb21121283689/manifest/video.m3u8",
+      "videoId": "30e6cc041111537c9cecb21121283689",
+      "id": "clip-95"
+    },
+    {
+      "title": "Clip 96",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/8af5d55ba0e70ae3627f7f2ec2da2415/manifest/video.m3u8",
+      "videoId": "8af5d55ba0e70ae3627f7f2ec2da2415",
+      "id": "clip-96"
+    },
+    {
+      "title": "Clip 97",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/27757c6f3c79b1a80bc5ef77c6e1dd18/manifest/video.m3u8",
+      "videoId": "27757c6f3c79b1a80bc5ef77c6e1dd18",
+      "id": "clip-97"
+    },
+    {
+      "title": "Clip 98",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/e1be255d67798530efb79ce5fb9bebad/manifest/video.m3u8",
+      "videoId": "e1be255d67798530efb79ce5fb9bebad",
+      "id": "clip-98"
+    },
+    {
+      "title": "Clip 99",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/caa2320820c8bf582c983ae626e76344/manifest/video.m3u8",
+      "videoId": "caa2320820c8bf582c983ae626e76344",
+      "id": "clip-99"
+    },
+    {
+      "title": "Clip 100",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/be6b48ceeac0a38c31e1a0d39d10f3df/manifest/video.m3u8",
+      "videoId": "be6b48ceeac0a38c31e1a0d39d10f3df",
+      "id": "clip-100"
+    },
+    {
+      "title": "Clip 101",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/73aeb294dfeb2f5d12d445e10abc489b/manifest/video.m3u8",
+      "videoId": "73aeb294dfeb2f5d12d445e10abc489b",
+      "id": "clip-101"
+    },
+    {
+      "title": "Clip 102",
+      "folder": "ratio-4-1",
+      "hlsUrl": "https://customer-da4812z845ijzly5.cloudflarestream.com/ddacf9cef965441a785cbf068ae34ab3/manifest/video.m3u8",
+      "videoId": "ddacf9cef965441a785cbf068ae34ab3",
+      "id": "clip-102"
     }
   ]
 }

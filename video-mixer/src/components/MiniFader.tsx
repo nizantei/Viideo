@@ -193,13 +193,13 @@ export function MiniFader({ miniIndex }: MiniFaderProps) {
           height: `${origHeight}px`,
         }}
       >
-        {/* Thin vertical track line */}
+        {/* Thin vertical track line - rises from bottom up to the handle */}
         <div
           style={{
             position: 'absolute',
             left: '50%',
-            top: 0,
             bottom: 0,
+            height: `${opacityPercent}%`,
             width: '2px',
             transform: 'translateX(-50%)',
             backgroundColor: 'rgba(160, 160, 160, 0.7)',
@@ -211,12 +211,12 @@ export function MiniFader({ miniIndex }: MiniFaderProps) {
           }}
         />
 
-        {/* Horizontal handle line */}
+        {/* Horizontal handle line - half width, centered */}
         <div
           style={{
             position: 'absolute',
-            left: 0,
-            right: 0,
+            left: '25%',
+            width: '50%',
             top: `${100 - opacityPercent}%`,
             height: '2px',
             backgroundColor: 'rgba(160, 160, 160, 0.9)',
