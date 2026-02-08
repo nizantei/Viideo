@@ -36,3 +36,4 @@ everything-claude-code/
 Git Token.txt
 *.token
 *token*.txt
+.vercel

@@ -179,6 +179,10 @@ function mixerReducer(state: MixerState, action: MixerAction): MixerState {
           active: true,
           targetMini: action.miniIndex,
         },
+        // If blend mode panel is open, update its target to the new edit mini
+        blendModeSelector: state.blendModeSelector.isOpen
+          ? { isOpen: true, targetMini: action.miniIndex }
+          : state.blendModeSelector,
       };
     }
 
@@ -199,6 +203,10 @@ function mixerReducer(state: MixerState, action: MixerAction): MixerState {
           ...state.editMode,
           targetMini: action.miniIndex,
         },
+        // If blend mode panel is open, update its target to the new edit mini
+        blendModeSelector: state.blendModeSelector.isOpen
+          ? { isOpen: true, targetMini: action.miniIndex }
+          : state.blendModeSelector,
       };
     }
 

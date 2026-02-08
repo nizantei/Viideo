@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useMixer } from '../context/MixerContext';
 import { FolderList } from './FolderList';
-import { getVideosByFolder, folders } from '../data/videos';
+import { getVideosByFolder } from '../data/videos';
 import { Video } from '../types';
 import { usePanelsConfig } from '../systems/panels';
 import styles from '../styles/LibraryOverlay.module.css';
@@ -43,11 +43,6 @@ export function LibraryOverlay() {
     if (targetMini === null) return;
     dispatch({ type: 'CLEAR_MINI_VIDEO', miniIndex: targetMini });
     dispatch({ type: 'CLOSE_LIBRARY' });
-  };
-
-  const getFolderName = (folderId: string) => {
-    const folder = folders.find((f) => f.id === folderId);
-    return folder?.name || folderId;
   };
 
   const hasVideo = targetMini !== null && state.minis[targetMini].videoId !== null;
@@ -112,13 +107,9 @@ export function LibraryOverlay() {
                 <img
                   className={styles.videoThumb}
                   src={video.thumbnailUrl}
-                  alt={video.title}
+                  alt=""
                   loading="lazy"
                 />
-                <div className={styles.videoInfo}>
-                  <div className={styles.videoTitle}>{video.title}</div>
-                  <div className={styles.videoFolder}>{getFolderName(video.folder)}</div>
-                </div>
               </div>
             ))
           )}

@@ -37,12 +37,11 @@ export function MiniVideo({ miniIndex, miniState, groupOpacity, videoUrl, belowA
   const useProtection = protection.enabled && isBlended;
 
   // blendStrength: how much of the "wet" blended layer (vs "dry" normal) to show.
-  // When layers below fade out, we crossfade from wet→dry so the video
-  // doesn't disappear against the black background.
+  // Linear mix: blendStrength equals the opacity of content below.
+  // At belowAlpha=1 → full blend mode. At belowAlpha=0 → full normal (dry).
   let blendStrength = 1.0;
   if (useProtection) {
-    const ramped = Math.pow(belowAlpha, protection.rampPower);
-    blendStrength = protection.minBlendStrength + (1 - protection.minBlendStrength) * ramped;
+    blendStrength = belowAlpha;
   }
 
   // Apply per-mode intensity (scales up/down the blend portion)

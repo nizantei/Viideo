@@ -12,7 +12,7 @@ export function BlendModeSelector() {
 
   const currentBlendMode = targetMini !== null ? state.minis[targetMini].blendMode : BlendMode.NORMAL;
 
-  // Scroll to center the active blend mode when panel opens
+  // Scroll to center the active blend mode when panel opens or target changes
   useEffect(() => {
     if (!isOpen || targetMini === null || !scrollRef.current) return;
     const activeEl = scrollRef.current.querySelector(`.${styles.active}`) as HTMLElement | null;
@@ -21,7 +21,7 @@ export function BlendModeSelector() {
       const scrollTop = activeEl.offsetTop - container.clientHeight / 2 + activeEl.clientHeight / 2;
       container.scrollTop = Math.max(0, scrollTop);
     }
-  }, [isOpen, targetMini]);
+  }, [isOpen, targetMini, currentBlendMode]);
 
   if (!isOpen || targetMini === null) return null;
 
@@ -36,7 +36,6 @@ export function BlendModeSelector() {
   };
 
   const panelStyle = {
-    '--blend-panel-width': `${panelsConfig.blendModeSelector.panelWidthPercent}%`,
     '--panel-bg': panelsConfig.panelBackground,
   } as React.CSSProperties;
 

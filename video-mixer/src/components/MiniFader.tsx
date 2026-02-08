@@ -193,16 +193,35 @@ export function MiniFader({ miniIndex }: MiniFaderProps) {
           height: `${origHeight}px`,
         }}
       >
-        {/* Fill bar - visible only when touching */}
+        {/* Thin vertical track line */}
+        <div
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: 0,
+            bottom: 0,
+            width: '2px',
+            transform: 'translateX(-50%)',
+            backgroundColor: 'rgba(160, 160, 160, 0.7)',
+            boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.8)',
+            borderRadius: '1px',
+            transition: isTouching ? 'none' : 'opacity 0.2s ease-out',
+            opacity: isTouching ? 1 : 0,
+            pointerEvents: 'none',
+          }}
+        />
+
+        {/* Horizontal handle line */}
         <div
           style={{
             position: 'absolute',
             left: 0,
             right: 0,
-            bottom: 0,
-            height: `${opacityPercent}%`,
-            backgroundColor: 'rgba(255, 255, 255, 0.35)',
-            borderRadius: '2px',
+            top: `${100 - opacityPercent}%`,
+            height: '2px',
+            backgroundColor: 'rgba(160, 160, 160, 0.9)',
+            boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.8)',
+            borderRadius: '1px',
             transition: isTouching ? 'none' : 'opacity 0.2s ease-out',
             opacity: isTouching ? 1 : 0,
             pointerEvents: 'none',
