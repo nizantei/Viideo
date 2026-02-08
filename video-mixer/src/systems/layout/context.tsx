@@ -20,7 +20,9 @@ interface LayoutContextValue {
   error: Error | null;
   getElement: (id: string) => LayoutElement | undefined;
   getElementStyle: (id: string) => React.CSSProperties;
+  getElementPanelStyle: (id: string) => React.CSSProperties | undefined;
   getElementRect: (id: string) => PixelRect | undefined;
+  getElementPanelRect: (id: string) => PixelRect | undefined;
   getElementHitSlop: (id: string) => { top: number; right: number; bottom: number; left: number } | undefined;
 }
 
@@ -103,6 +105,17 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
     [getElement, viewport, safeAreaPx]
   );
 
+  // Get element panel style (alternate position when side panels are open)
+  const getElementPanelStyle = useCallback(
+    (id: string): React.CSSProperties | undefined => {
+      const element = getElement(id);
+      if (!element?.panelRect) return undefined;
+      const panelElement = { ...element, rect: element.panelRect };
+      return calculateElementStyle(panelElement, viewport, safeAreaPx);
+    },
+    [getElement, viewport, safeAreaPx]
+  );
+
   // Get element rect
   const getElementRect = useCallback(
     (id: string): PixelRect | undefined => {
@@ -112,6 +125,17 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
       }
 
       return calculateElementRect(element, viewport, safeAreaPx);
+    },
+    [getElement, viewport, safeAreaPx]
+  );
+
+  // Get element panel rect
+  const getElementPanelRect = useCallback(
+    (id: string): PixelRect | undefined => {
+      const element = getElement(id);
+      if (!element?.panelRect) return undefined;
+      const panelElement = { ...element, rect: element.panelRect };
+      return calculateElementRect(panelElement, viewport, safeAreaPx);
     },
     [getElement, viewport, safeAreaPx]
   );
@@ -136,7 +160,9 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
     error,
     getElement,
     getElementStyle,
+    getElementPanelStyle,
     getElementRect,
+    getElementPanelRect,
     getElementHitSlop,
   };
 
@@ -206,18 +232,22 @@ export function useLayout(): LayoutContextValue {
 export function useLayoutElement(id: string): {
   element: LayoutElement | undefined;
   style: React.CSSProperties;
+  panelStyle: React.CSSProperties | undefined;
   rect: PixelRect | undefined;
+  panelRect: PixelRect | undefined;
   hitSlop: { top: number; right: number; bottom: number; left: number } | undefined;
 } {
-  const { getElement, getElementStyle, getElementRect, getElementHitSlop } = useLayout();
+  const { getElement, getElementStyle, getElementPanelStyle, getElementRect, getElementPanelRect, getElementHitSlop } = useLayout();
 
   return useMemo(
     () => ({
       element: getElement(id),
       style: getElementStyle(id),
+      panelStyle: getElementPanelStyle(id),
       rect: getElementRect(id),
+      panelRect: getElementPanelRect(id),
       hitSlop: getElementHitSlop(id),
     }),
-    [id, getElement, getElementStyle, getElementRect, getElementHitSlop]
+    [id, getElement, getElementStyle, getElementPanelStyle, getElementRect, getElementPanelRect, getElementHitSlop]
   );
 }

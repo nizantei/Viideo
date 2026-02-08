@@ -81,7 +81,7 @@ export const BLEND_MODE_REGISTRY: BlendModeMetadata[] = [
   },
   {
     id: BlendMode.LINEAR_DODGE,
-    displayName: 'Linear Dodge (Add)',
+    displayName: 'Linear Add',
     description: 'Adds color values, brightens highlights',
     category: 'lighten',
   },

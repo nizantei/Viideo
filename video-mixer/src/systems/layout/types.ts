@@ -45,6 +45,7 @@ export type AnchorPoint =
 export interface LayoutElement {
   id: string;
   rect: NormalizedRect;
+  panelRect?: NormalizedRect;  // alternate position when side panels are open
   zIndex?: number;
   useSafeArea?: boolean;
   anchor?: AnchorPoint;

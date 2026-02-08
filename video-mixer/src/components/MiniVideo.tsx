@@ -4,7 +4,7 @@ import { useMixer } from '../context/MixerContext';
 import { useBlendConfig } from '../systems/blendConfig';
 import { calculateFinalOpacity } from '../utils/opacity';
 import { buildTransformString, calculateSwingTranslateX } from '../utils/transforms';
-import { blendModeToCSSMixBlendMode, isDarkSensitiveBlendMode, getBlendModeConfigKey } from '../utils/blendModeMapping';
+import { blendModeToCSSMixBlendMode, getBlendModeConfigKey } from '../utils/blendModeMapping';
 import { BlendMode } from '../services/blendModes';
 import { useGestures } from '../hooks/useGestures';
 import { CachingLoader } from '../services/hls/CachingLoader';
@@ -33,20 +33,21 @@ export function MiniVideo({ miniIndex, miniState, groupOpacity, videoUrl, belowA
   const protection = blendConfig.protection;
   const modeKey = getBlendModeConfigKey(miniState.blendMode);
   const modeIntensity = blendConfig.modes[modeKey]?.intensity ?? 1.0;
-  const isDarkSensitive = protection.enabled
-    && isDarkSensitiveBlendMode(miniState.blendMode, protection.darkSensitiveModes);
+  const isBlended = miniState.blendMode !== BlendMode.NORMAL;
+  const useProtection = protection.enabled && isBlended;
 
-  // blendStrength: how much of the blended (vs normal) layer to show
-  // Ramps from minBlendStrength (when nothing below) to 1.0 (when full content below)
+  // blendStrength: how much of the "wet" blended layer (vs "dry" normal) to show.
+  // When layers below fade out, we crossfade from wet→dry so the video
+  // doesn't disappear against the black background.
   let blendStrength = 1.0;
-  if (isDarkSensitive && miniState.blendMode !== BlendMode.NORMAL) {
+  if (useProtection) {
     const ramped = Math.pow(belowAlpha, protection.rampPower);
     blendStrength = protection.minBlendStrength + (1 - protection.minBlendStrength) * ramped;
   }
 
   // Apply per-mode intensity (scales up/down the blend portion)
   const effectiveBlend = Math.min(1.0, blendStrength * modeIntensity);
-  const needsNormalBacking = isDarkSensitive && effectiveBlend < 1 && miniState.blendMode !== BlendMode.NORMAL;
+  const needsNormalBacking = useProtection && effectiveBlend < 1;
 
   // --- HLS video loading ---
   useEffect(() => {
@@ -87,10 +88,22 @@ export function MiniVideo({ miniIndex, miniState, groupOpacity, videoUrl, belowA
         maxBufferLength: 600,
         maxMaxBufferLength: 600,
         fLoader: CachingLoader as any,
+        // Lock to highest quality: disable ABR, start at highest level
+        abrEwmaDefaultEstimate: 100_000_000, // pretend 100 Mbps bandwidth
+        startLevel: -1, // auto-select (will pick highest with high bw estimate)
       });
 
       hls.loadSource(videoUrl);
       hls.attachMedia(video);
+
+      // Once manifest is parsed, lock to the highest quality level
+      hls.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
+        const highestLevel = data.levels.length - 1;
+        hls.currentLevel = highestLevel;    // force current level
+        hls.nextLevel = highestLevel;       // force next segment level
+        hls.loadLevel = highestLevel;       // lock load level
+        hls.nextAutoLevel = highestLevel;   // override ABR
+      });
 
       hls.on(Hls.Events.ERROR, (_, data) => {
         if (data.fatal) {

@@ -33,13 +33,13 @@ export function blendModeToCSSMixBlendMode(blendMode: BlendMode): CSSProperties[
     case BlendMode.LINEAR_BURN:
       return 'darken';
     case BlendMode.SUBTRACT:
-      return 'exclusion';
+      return 'difference';   // max(A-B,0) ≈ |A-B|
     case BlendMode.LINEAR_DODGE:
       return 'lighten';
     case BlendMode.DIVIDE:
-      return 'color-dodge';
+      return 'screen';       // both brighten; avoids duplicate with color-dodge
     case BlendMode.VIVID_LIGHT:
-      return 'hard-light';
+      return 'overlay';      // midpoint-switching contrast; avoids duplicate with hard-light
     case BlendMode.PIN_LIGHT:
       return 'luminosity';
     default:

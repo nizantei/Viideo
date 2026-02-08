@@ -12,7 +12,12 @@ export function ExitEditButton() {
   const handleTap = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    dispatch({ type: 'EXIT_EDIT_MODE' });
+    // If blend mode panel is open, close it first; otherwise exit edit mode
+    if (state.blendModeSelector.isOpen) {
+      dispatch({ type: 'CLOSE_BLEND_MODE_SELECTOR' });
+    } else {
+      dispatch({ type: 'EXIT_EDIT_MODE' });
+    }
   };
 
   return (

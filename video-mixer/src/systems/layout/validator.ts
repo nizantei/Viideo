@@ -87,6 +87,10 @@ function validateElement(element: LayoutElement): void {
 
   validateNormalizedRect(element.rect, element.id);
 
+  if (element.panelRect) {
+    validateNormalizedRect(element.panelRect, element.id + '.panelRect');
+  }
+
   if (element.zIndex !== undefined && typeof element.zIndex !== 'number') {
     throw new LayoutValidationError(`Element "${element.id}": zIndex must be a number`);
   }

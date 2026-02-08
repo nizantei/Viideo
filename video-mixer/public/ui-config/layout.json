@@ -16,30 +16,36 @@
   "_elements_explanation": "Each element defines a UI component's position, size, and behavior. Required: id, rect. Optional: anchor, useSafeArea, zIndex, hitSlop, minSize, maxSize, aspectRatio, visible.",
   "elements": [
     {
-      "_comment": "Mini Button 1 - Bottom left video slot",
+      "_comment": "Mini Button 1 - Far left video slot",
       "id": "mini1",
       "rect": {
-        "_x": "Horizontal position: 0.140 = 14% from left edge of safe area",
-        "x": 0.160,
-        "_y": "Vertical position: >1.0 extends past safe area to actual screen bottom edge",
+        "x": 0.070,
         "y": 1.025,
-        "_w": "Width: 0.091 = 9.1% of screen width (roughly square on most screens)",
         "w": 0.091,
-        "_h": "Height: 0.094 = 9.4% of screen height",
         "h": 0.094
       },
-      "_anchor": "Which corner/edge of element to position at x,y. Options: top-left, top-center, top-right, center-left, center, center-right, bottom-left, bottom-center, bottom-right",
+      "panelRect": {
+        "_comment": "Position when side panels are open — clears 18% left and 22% right library panels",
+        "x": 0.175,
+        "y": 1.025,
+        "w": 0.091,
+        "h": 0.094
+      },
       "anchor": "bottom-left",
-      "_useSafeArea": "If true, position is calculated within safe area (respects safeArea padding). If false, uses full viewport",
       "useSafeArea": true,
-      "_zIndex": "Stacking order. Higher = on top. Range: 1-100. Mini buttons=10, crossfader=10, tapToLoad=100",
       "zIndex": 10
     },
     {
-      "_comment": "Mini Button 2 - Second from left",
+      "_comment": "Mini Button 2 - Inner left",
       "id": "mini2",
       "rect": {
-        "x": 0.250,
+        "x": 0.160,
+        "y": 1.025,
+        "w": 0.091,
+        "h": 0.094
+      },
+      "panelRect": {
+        "x": 0.266,
         "y": 1.025,
         "w": 0.091,
         "h": 0.094
@@ -49,10 +55,16 @@
       "zIndex": 10
     },
     {
-      "_comment": "Mini Button 3 - Second from right",
+      "_comment": "Mini Button 3 - Inner right",
       "id": "mini3",
       "rect": {
-        "x": 0.659,
+        "x": 0.749,
+        "y": 1.025,
+        "w": 0.091,
+        "h": 0.094
+      },
+      "panelRect": {
+        "x": 0.599,
         "y": 1.025,
         "w": 0.091,
         "h": 0.094
@@ -62,10 +74,16 @@
       "zIndex": 10
     },
     {
-      "_comment": "Mini Button 4 - Bottom right video slot",
+      "_comment": "Mini Button 4 - Far right video slot",
       "id": "mini4",
       "rect": {
-        "x": 0.749,
+        "x": 0.839,
+        "y": 1.025,
+        "w": 0.091,
+        "h": 0.094
+      },
+      "panelRect": {
+        "x": 0.690,
         "y": 1.025,
         "w": 0.091,
         "h": 0.094
@@ -75,11 +93,17 @@
       "zIndex": 10
     },
     {
-      "_comment": "Vertical Fader 1 - Invisible fill bar above mini1. Same width as mini button.",
+      "_comment": "Vertical Fader 1 - Above mini1",
       "id": "vfader1",
       "rect": {
-        "x": 0.160,
-        "y": 0.900,
+        "x": 0.070,
+        "y": 0.840,
+        "w": 0.091,
+        "h": 0.400
+      },
+      "panelRect": {
+        "x": 0.175,
+        "y": 0.840,
         "w": 0.091,
         "h": 0.400
       },
@@ -88,11 +112,17 @@
       "zIndex": 15
     },
     {
-      "_comment": "Vertical Fader 2 - Invisible fill bar above mini2",
+      "_comment": "Vertical Fader 2 - Above mini2",
       "id": "vfader2",
       "rect": {
-        "x": 0.250,
-        "y": 0.900,
+        "x": 0.160,
+        "y": 0.840,
+        "w": 0.091,
+        "h": 0.400
+      },
+      "panelRect": {
+        "x": 0.266,
+        "y": 0.840,
         "w": 0.091,
         "h": 0.400
       },
@@ -101,11 +131,17 @@
       "zIndex": 15
     },
     {
-      "_comment": "Vertical Fader 3 - Invisible fill bar above mini3",
+      "_comment": "Vertical Fader 3 - Above mini3",
       "id": "vfader3",
       "rect": {
-        "x": 0.659,
-        "y": 0.900,
+        "x": 0.749,
+        "y": 0.840,
+        "w": 0.091,
+        "h": 0.400
+      },
+      "panelRect": {
+        "x": 0.599,
+        "y": 0.840,
         "w": 0.091,
         "h": 0.400
       },
@@ -114,11 +150,17 @@
       "zIndex": 15
     },
     {
-      "_comment": "Vertical Fader 4 - Invisible fill bar above mini4",
+      "_comment": "Vertical Fader 4 - Above mini4",
       "id": "vfader4",
       "rect": {
-        "x": 0.749,
-        "y": 0.900,
+        "x": 0.839,
+        "y": 0.840,
+        "w": 0.091,
+        "h": 0.400
+      },
+      "panelRect": {
+        "x": 0.690,
+        "y": 0.840,
         "w": 0.091,
         "h": 0.400
       },

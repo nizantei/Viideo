@@ -9,7 +9,10 @@ interface MiniButtonProps {
 
 export function MiniButton({ miniIndex }: MiniButtonProps) {
   const { state, dispatch } = useMixer();
-  const { style, rect } = useLayoutElement(`mini${miniIndex + 1}`);
+  const { style, panelStyle, rect, panelRect } = useLayoutElement(`mini${miniIndex + 1}`);
+  const isPanelOpen = state.blendModeSelector.isOpen || state.library.isOpen;
+  const activeStyle = isPanelOpen && panelStyle ? panelStyle : style;
+  const activeRect = isPanelOpen && panelRect ? panelRect : rect;
   const longPressTimerRef = useRef<number | null>(null);
   const longPressTriggeredRef = useRef(false);
   const isTouchActiveRef = useRef(false);
@@ -29,8 +32,8 @@ export function MiniButton({ miniIndex }: MiniButtonProps) {
   // --- Opacity fill border calculations ---
   // The fill goes around 3 sides: left (bottom→top), top (left→right), right (top→bottom)
   // Bottom border is always grey
-  const bw = rect?.w ?? 50;
-  const bh = rect?.h ?? 50;
+  const bw = activeRect?.w ?? 50;
+  const bh = activeRect?.h ?? 50;
   const totalPerim = 2 * bh + bw; // left + top + right
   const fillDist = miniState.opacity * totalPerim;
 
@@ -120,9 +123,10 @@ export function MiniButton({ miniIndex }: MiniButtonProps) {
       onMouseUp={handleMouseUp}
       onContextMenu={(e) => e.preventDefault()}
       style={{
-        ...style,
+        ...activeStyle,
         borderRadius,
         border: 'none',
+        transition: 'left 0.3s ease',
         padding: 0,
         backgroundColor: hasVideo ? bgColorVideo : bgColor,
         cursor: 'pointer',

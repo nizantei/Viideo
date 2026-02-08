@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react';
 import { useMixer } from '../context/MixerContext';
 import { BLEND_MODE_REGISTRY, BlendMode } from '../services/blendModes';
 import { usePanelsConfig } from '../systems/panels';
@@ -6,11 +7,23 @@ import styles from '../styles/BlendModeSelector.module.css';
 export function BlendModeSelector() {
   const { state, dispatch } = useMixer();
   const panelsConfig = usePanelsConfig();
+  const scrollRef = useRef<HTMLDivElement>(null);
   const { isOpen, targetMini } = state.blendModeSelector;
 
-  if (!isOpen || targetMini === null) return null;
+  const currentBlendMode = targetMini !== null ? state.minis[targetMini].blendMode : BlendMode.NORMAL;
 
-  const currentBlendMode = state.minis[targetMini].blendMode;
+  // Scroll to center the active blend mode when panel opens
+  useEffect(() => {
+    if (!isOpen || targetMini === null || !scrollRef.current) return;
+    const activeEl = scrollRef.current.querySelector(`.${styles.active}`) as HTMLElement | null;
+    if (activeEl) {
+      const container = scrollRef.current;
+      const scrollTop = activeEl.offsetTop - container.clientHeight / 2 + activeEl.clientHeight / 2;
+      container.scrollTop = Math.max(0, scrollTop);
+    }
+  }, [isOpen, targetMini]);
+
+  if (!isOpen || targetMini === null) return null;
 
   const handleClose = (e: React.TouchEvent | React.MouseEvent) => {
     e.stopPropagation();
@@ -32,9 +45,6 @@ export function BlendModeSelector() {
       className={`${styles.overlay} ${isOpen ? styles.open : ''}`}
       style={panelStyle}
     >
-      {/* Tap left area to close */}
-      <div className={styles.closeTap} onTouchEnd={handleClose} onClick={handleClose} />
-
       {/* Right side panel */}
       <div className={styles.panel}>
         <div className={styles.panelHeader}>
@@ -45,7 +55,7 @@ export function BlendModeSelector() {
             ×
           </button>
         </div>
-        <div className={styles.panelScroll}>
+        <div ref={scrollRef} className={styles.panelScroll}>
           {BLEND_MODE_REGISTRY.map((metadata) => {
             const isActive = metadata.id === currentBlendMode;
             return (
@@ -54,10 +64,7 @@ export function BlendModeSelector() {
                 className={`${styles.blendModeItem} ${isActive ? styles.active : ''}`}
                 onClick={() => handleSelectBlendMode(metadata.id)}
               >
-                <div className={styles.blendModeInfo}>
-                  <span className={styles.blendModeName}>{metadata.displayName}</span>
-                  <span className={styles.blendModeDescription}>{metadata.description}</span>
-                </div>
+                <span className={styles.blendModeName}>{metadata.displayName}</span>
               </button>
             );
           })}
