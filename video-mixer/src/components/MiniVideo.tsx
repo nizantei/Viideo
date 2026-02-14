@@ -1,9 +1,9 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { MiniState, MiniIndex } from '../types';
 import { useMixer } from '../context/MixerContext';
 import { useBlendConfig } from '../systems/blendConfig';
 import { calculateFinalOpacity } from '../utils/opacity';
-import { buildTransformString, calculateSwingTranslateX } from '../utils/transforms';
+import { buildTransformString, swingPositionToObjectPosition } from '../utils/transforms';
 import { blendModeToCSSMixBlendMode, getBlendModeConfigKey } from '../utils/blendModeMapping';
 import { BlendMode } from '../services/blendModes';
 import { useGestures } from '../hooks/useGestures';
@@ -26,7 +26,7 @@ export function MiniVideo({ miniIndex, miniState, groupOpacity, videoUrl, belowA
   const rafRef = useRef<number>(0);
   const { state, dispatch } = useMixer();
   const blendConfig = useBlendConfig();
-  const { bind: gestureBind } = useGestures(miniIndex);
+  const { bind: gestureBind } = useGestures(miniIndex, containerRef);
   const isEditTarget = state.editMode.active && state.editMode.targetMini === miniIndex;
 
   // --- Blend config calculations ---
@@ -36,15 +36,11 @@ export function MiniVideo({ miniIndex, miniState, groupOpacity, videoUrl, belowA
   const isBlended = miniState.blendMode !== BlendMode.NORMAL;
   const useProtection = protection.enabled && isBlended;
 
-  // blendStrength: how much of the "wet" blended layer (vs "dry" normal) to show.
-  // Linear mix: blendStrength equals the opacity of content below.
-  // At belowAlpha=1 → full blend mode. At belowAlpha=0 → full normal (dry).
   let blendStrength = 1.0;
   if (useProtection) {
     blendStrength = belowAlpha;
   }
 
-  // Apply per-mode intensity (scales up/down the blend portion)
   const effectiveBlend = Math.min(1.0, blendStrength * modeIntensity);
   const needsNormalBacking = useProtection && effectiveBlend < 1;
 
@@ -87,21 +83,19 @@ export function MiniVideo({ miniIndex, miniState, groupOpacity, videoUrl, belowA
         maxBufferLength: 600,
         maxMaxBufferLength: 600,
         fLoader: CachingLoader as any,
-        // Lock to highest quality: disable ABR, start at highest level
-        abrEwmaDefaultEstimate: 100_000_000, // pretend 100 Mbps bandwidth
-        startLevel: -1, // auto-select (will pick highest with high bw estimate)
+        abrEwmaDefaultEstimate: 100_000_000,
+        startLevel: -1,
       });
 
       hls.loadSource(videoUrl);
       hls.attachMedia(video);
 
-      // Once manifest is parsed, lock to the highest quality level
       hls.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
         const highestLevel = data.levels.length - 1;
-        hls.currentLevel = highestLevel;    // force current level
-        hls.nextLevel = highestLevel;       // force next segment level
-        hls.loadLevel = highestLevel;       // lock load level
-        hls.nextAutoLevel = highestLevel;   // override ABR
+        hls.currentLevel = highestLevel;
+        hls.nextLevel = highestLevel;
+        hls.loadLevel = highestLevel;
+        hls.nextAutoLevel = highestLevel;
       });
 
       hls.on(Hls.Events.ERROR, (_, data) => {
@@ -135,6 +129,38 @@ export function MiniVideo({ miniIndex, miniState, groupOpacity, videoUrl, belowA
       }
     };
   }, [videoUrl, miniIndex, dispatch, miniState.isPlaying]);
+
+  // Ref tracks autoSwinging so the loadeddata handler reads the value at load time
+  // without re-subscribing the effect when the toggle changes
+  const autoSwingingRef = useRef(state.settings.autoSwinging);
+  autoSwingingRef.current = state.settings.autoSwinging;
+
+  // Auto-enable swinging when video loads (only at load time, not on toggle change)
+  const handleAutoSwing = useCallback(() => {
+    const video = videoRef.current;
+    if (!video || !autoSwingingRef.current) return;
+    if (video.videoWidth === 0 || video.videoHeight === 0) return;
+
+    const videoAspect = video.videoWidth / video.videoHeight;
+    const canvasAspect = 3; // 3:1
+    if (videoAspect > canvasAspect) {
+      dispatch({
+        type: 'UPDATE_MINI_SWINGING',
+        miniIndex,
+        swinging: { enabled: true },
+      });
+    }
+  }, [dispatch, miniIndex]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !videoUrl) return;
+
+    video.addEventListener('loadeddata', handleAutoSwing);
+    return () => {
+      video.removeEventListener('loadeddata', handleAutoSwing);
+    };
+  }, [videoUrl, handleAutoSwing]);
 
   // Handle play/pause
   useEffect(() => {
@@ -178,33 +204,24 @@ export function MiniVideo({ miniIndex, miniState, groupOpacity, videoUrl, belowA
   // --- Layout calculations ---
   const finalOpacity = calculateFinalOpacity(miniState, { opacity: groupOpacity });
 
-  const video = videoRef.current;
-  const swingTranslateX = containerRef.current && video
-    ? calculateSwingTranslateX(
-        miniState.swinging,
-        video.videoWidth,
-        containerRef.current.clientWidth,
-        miniState.zoom
-      )
-    : 0;
+  // Always use swinging.position for object-position.
+  // When swinging is enabled, the animation loop updates position.
+  // When disabled, position holds the last value (manual drag or default 0.5 center).
+  const objectPosition = swingPositionToObjectPosition(miniState.swinging.position);
 
+  // Build transform without swing translate (zoom/pan only, pan frozen at 0)
   const transform = buildTransformString(
     miniState.zoom,
     miniState.panX,
     miniState.panY,
-    swingTranslateX
+    0 // no swing translate — using object-position instead
   );
 
   const baseZIndex = miniIndex + 1;
   const zIndex = baseZIndex;
 
-  // CSS mix-blend-mode must be on the CONTAINER div (not the video element)
-  // so it blends with other MiniVideo layers in the parent stacking context.
   const mixBlendMode = blendModeToCSSMixBlendMode(miniState.blendMode);
 
-  // Cross-fade opacities for protection system:
-  // - normalOpacity: the "safe" normal-mode canvas (prevents black-on-black)
-  // - blendedOpacity: the video with the actual blend mode
   const normalOpacity = needsNormalBacking ? finalOpacity * (1 - effectiveBlend) : 0;
   const blendedOpacity = needsNormalBacking
     ? finalOpacity * effectiveBlend
@@ -221,8 +238,7 @@ export function MiniVideo({ miniIndex, miniState, groupOpacity, videoUrl, belowA
 
   return (
     <>
-      {/* Normal-mode backing container: renders video copy without blend mode
-          (prevents dark-sensitive modes from going black against empty background) */}
+      {/* Normal-mode backing container */}
       {needsNormalBacking && videoUrl && (
         <div
           style={{
@@ -239,17 +255,16 @@ export function MiniVideo({ miniIndex, miniState, groupOpacity, videoUrl, belowA
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              objectPosition: 'center',
+              objectPosition,
               opacity: normalOpacity,
               transform,
-              willChange: 'transform, opacity',
+              willChange: 'transform, opacity, object-position',
             }}
           />
         </div>
       )}
 
-      {/* Main video container — blend mode is on this container div
-          so it composites with other video layers below */}
+      {/* Main video container */}
       <div
         ref={containerRef}
         {...(isEditTarget ? gestureBind() : {})}
@@ -273,10 +288,10 @@ export function MiniVideo({ miniIndex, miniState, groupOpacity, videoUrl, belowA
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              objectPosition: 'center',
+              objectPosition,
               opacity: blendedOpacity,
               transform,
-              willChange: 'transform, opacity',
+              willChange: 'transform, opacity, object-position',
             }}
             muted
             playsInline

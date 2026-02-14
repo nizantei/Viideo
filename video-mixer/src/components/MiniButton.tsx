@@ -1,6 +1,6 @@
 import React, { useRef, useCallback } from 'react';
 import { useMixer } from '../context/MixerContext';
-import { useLayoutElement, useColor, useBorderRadius } from '../systems';
+import { useLayoutElement, useColor } from '../systems';
 import { MiniIndex } from '../types';
 
 interface MiniButtonProps {
@@ -9,16 +9,14 @@ interface MiniButtonProps {
 
 export function MiniButton({ miniIndex }: MiniButtonProps) {
   const { state, dispatch } = useMixer();
-  const { style, panelStyle, rect, panelRect } = useLayoutElement(`mini${miniIndex + 1}`);
+  const { style, panelStyle } = useLayoutElement(`mini${miniIndex + 1}`);
   const isPanelOpen = state.blendModeSelector.isOpen || state.library.isOpen;
   const activeStyle = isPanelOpen && panelStyle ? panelStyle : style;
-  const activeRect = isPanelOpen && panelRect ? panelRect : rect;
   const longPressTimerRef = useRef<number | null>(null);
   const longPressTriggeredRef = useRef(false);
   const isTouchActiveRef = useRef(false);
 
   // Config-driven styling
-  const borderRadius = useBorderRadius('medium');
   const borderColorInactive = useColor('borderInactive');
   const borderColorEdit = useColor('borderEdit');
   const bgColor = useColor('background');
@@ -30,16 +28,9 @@ export function MiniButton({ miniIndex }: MiniButtonProps) {
   const hasVideo = miniState.videoId !== null;
 
   // --- Opacity fill border calculations ---
-  // The fill goes around 3 sides: left (bottom→top), top (left→right), right (top→bottom)
-  // Bottom border is always grey
-  const bw = activeRect?.w ?? 50;
-  const bh = activeRect?.h ?? 50;
-  const totalPerim = 2 * bh + bw; // left + top + right
-  const fillDist = miniState.opacity * totalPerim;
-
-  const leftFill = Math.min(fillDist / bh, 1);
-  const topFill = fillDist > bh ? Math.min((fillDist - bh) / bw, 1) : 0;
-  const rightFill = fillDist > bh + bw ? Math.min((fillDist - bh - bw) / bh, 1) : 0;
+  // Single vertical side: right side for minis 0-1, left side for minis 2-3
+  // Bottom = 0%, top = 100%
+  const isLeftGroup = miniIndex <= 1;
 
   const BORDER_W = 2; // px
   const EDIT_BORDER_W = 3; // px
@@ -124,7 +115,7 @@ export function MiniButton({ miniIndex }: MiniButtonProps) {
       onContextMenu={(e) => e.preventDefault()}
       style={{
         ...activeStyle,
-        borderRadius,
+        borderRadius: 0,
         border: 'none',
         transition: 'left 0.3s ease',
         padding: 0,
@@ -198,61 +189,26 @@ export function MiniButton({ miniIndex }: MiniButtonProps) {
           position: 'absolute',
           inset: 0,
           border: `${BORDER_W}px solid ${borderColorInactive}`,
-          borderRadius,
+          borderRadius: 0,
           pointerEvents: 'none',
           zIndex: 6,
         }}
       />
 
-      {/* Blue opacity fill — 3 sides: left (bottom→top), top (left→right), right (top→bottom) */}
+      {/* Blue opacity fill — single vertical side: right for minis 1-2, left for minis 3-4 */}
       {miniState.opacity > 0 && (
-        <>
-          {/* Left side fill: bottom to top */}
-          {leftFill > 0 && (
-            <div
-              style={{
-                position: 'absolute',
-                left: 0,
-                bottom: 0,
-                width: `${BORDER_W}px`,
-                height: `${leftFill * 100}%`,
-                background: blueColor,
-                pointerEvents: 'none',
-                zIndex: 7,
-              }}
-            />
-          )}
-          {/* Top side fill: left to right */}
-          {topFill > 0 && (
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                height: `${BORDER_W}px`,
-                width: `${topFill * 100}%`,
-                background: blueColor,
-                pointerEvents: 'none',
-                zIndex: 7,
-              }}
-            />
-          )}
-          {/* Right side fill: top to bottom */}
-          {rightFill > 0 && (
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                right: 0,
-                width: `${BORDER_W}px`,
-                height: `${rightFill * 100}%`,
-                background: blueColor,
-                pointerEvents: 'none',
-                zIndex: 7,
-              }}
-            />
-          )}
-        </>
+        <div
+          style={{
+            position: 'absolute',
+            [isLeftGroup ? 'right' : 'left']: 0,
+            bottom: 0,
+            width: `${BORDER_W}px`,
+            height: `${miniState.opacity * 100}%`,
+            background: blueColor,
+            pointerEvents: 'none',
+            zIndex: 7,
+          }}
+        />
       )}
 
     </button>

@@ -19,14 +19,14 @@
       "_comment": "Mini Button 1 - Far left video slot",
       "id": "mini1",
       "rect": {
-        "x": 0.070,
-        "y": 1.025,
+        "x": 0.116,
+        "y": 1.020,
         "w": 0.091,
         "h": 0.094
       },
       "panelRect": {
         "_comment": "Position when side panels are open — clears 18% left and 22% right library panels",
-        "x": 0.175,
+        "x": 0.221,
         "y": 1.025,
         "w": 0.091,
         "h": 0.094
@@ -39,13 +39,13 @@
       "_comment": "Mini Button 2 - Inner left",
       "id": "mini2",
       "rect": {
-        "x": 0.160,
-        "y": 1.025,
+        "x": 0.207,
+        "y": 1.020,
         "w": 0.091,
         "h": 0.094
       },
       "panelRect": {
-        "x": 0.266,
+        "x": 0.312,
         "y": 1.025,
         "w": 0.091,
         "h": 0.094
@@ -58,13 +58,13 @@
       "_comment": "Mini Button 3 - Inner right",
       "id": "mini3",
       "rect": {
-        "x": 0.749,
-        "y": 1.025,
+        "x": 0.704,
+        "y": 1.020,
         "w": 0.091,
         "h": 0.094
       },
       "panelRect": {
-        "x": 0.599,
+        "x": 0.554,
         "y": 1.025,
         "w": 0.091,
         "h": 0.094
@@ -77,13 +77,13 @@
       "_comment": "Mini Button 4 - Far right video slot",
       "id": "mini4",
       "rect": {
-        "x": 0.839,
-        "y": 1.025,
+        "x": 0.794,
+        "y": 1.020,
         "w": 0.091,
         "h": 0.094
       },
       "panelRect": {
-        "x": 0.690,
+        "x": 0.645,
         "y": 1.025,
         "w": 0.091,
         "h": 0.094
@@ -96,13 +96,13 @@
       "_comment": "Vertical Fader 1 - Above mini1",
       "id": "vfader1",
       "rect": {
-        "x": 0.070,
+        "x": 0.116,
         "y": 0.840,
         "w": 0.091,
         "h": 0.400
       },
       "panelRect": {
-        "x": 0.175,
+        "x": 0.221,
         "y": 0.840,
         "w": 0.091,
         "h": 0.400
@@ -115,13 +115,13 @@
       "_comment": "Vertical Fader 2 - Above mini2",
       "id": "vfader2",
       "rect": {
-        "x": 0.160,
+        "x": 0.206,
         "y": 0.840,
         "w": 0.091,
         "h": 0.400
       },
       "panelRect": {
-        "x": 0.266,
+        "x": 0.312,
         "y": 0.840,
         "w": 0.091,
         "h": 0.400
@@ -134,13 +134,13 @@
       "_comment": "Vertical Fader 3 - Above mini3",
       "id": "vfader3",
       "rect": {
-        "x": 0.749,
+        "x": 0.704,
         "y": 0.840,
         "w": 0.091,
         "h": 0.400
       },
       "panelRect": {
-        "x": 0.599,
+        "x": 0.554,
         "y": 0.840,
         "w": 0.091,
         "h": 0.400
@@ -153,13 +153,13 @@
       "_comment": "Vertical Fader 4 - Above mini4",
       "id": "vfader4",
       "rect": {
-        "x": 0.839,
+        "x": 0.794,
         "y": 0.840,
         "w": 0.091,
         "h": 0.400
       },
       "panelRect": {
-        "x": 0.690,
+        "x": 0.645,
         "y": 0.840,
         "w": 0.091,
         "h": 0.400

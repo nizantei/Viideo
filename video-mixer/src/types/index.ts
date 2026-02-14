@@ -55,6 +55,8 @@ export interface BlendModeSelectorState {
 
 export interface SettingsState {
   isOpen: boolean;
+  autoSwinging: boolean;
+  swingDuration: number;
 }
 
 export interface MixerState {
@@ -91,6 +93,8 @@ export interface MixSnapshot {
   canvasZoom: number;
   canvasPanX: number;
   canvasPanY: number;
+  autoSwinging: boolean;
+  swingDuration: number;
 }
 
 export type MiniIndex = 0 | 1 | 2 | 3;
@@ -122,4 +126,6 @@ export type MixerAction =
   | { type: 'EXIT_FULLSCREEN_MODE' }
   | { type: 'OPEN_SETTINGS' }
   | { type: 'CLOSE_SETTINGS' }
+  | { type: 'TOGGLE_AUTO_SWINGING' }
+  | { type: 'SET_SWING_DURATION'; duration: number }
   | { type: 'LOAD_MIX_STATE'; snapshot: MixSnapshot };

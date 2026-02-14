@@ -1,59 +1,142 @@
-import { useCallback } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import { useGesture } from '@use-gesture/react';
 import { useMixer } from '../context/MixerContext';
-import { useZoomConfig } from '../systems/zoom';
 import { MiniIndex } from '../types';
 
-export function useGestures(miniIndex: MiniIndex) {
+// Per-video zoom/pan is FROZEN — see src/frozen-features/usePerVideoZoom.ts
+
+/** All gesture tuning knobs — adjust these to taste */
+const GESTURE_CONFIG = {
+  // Long-press: hold this long (ms) without moving to enter drag mode
+  longPressDelay: 200,
+  // Long-press: max finger drift (px) allowed during the hold period
+  longPressTolerance: 10,
+  // Drag sensitivity: 1.0 = full screen drag moves 0→100%.
+  //   Higher = more sensitive (less finger movement needed).
+  //   e.g. 2.0 means half a screen width covers the full range.
+  dragSensitivity: 2.0,
+  // Swipe: minimum velocity (px/ms) to count as a swipe
+  swipeMinVelocity: 0.5,
+  // Swipe: minimum distance (px) to count as a swipe
+  swipeMinDistance: 30,
+};
+
+export function useGestures(miniIndex: MiniIndex, containerRef: React.RefObject<HTMLDivElement | null>) {
   const { state, dispatch } = useMixer();
-  const zoomConfig = useZoomConfig();
-
-  const { minZoom, maxZoom } = zoomConfig.video;
   const miniState = state.minis[miniIndex];
+  const isEditTarget = state.editMode.active && state.editMode.targetMini === miniIndex;
 
-  const clampPan = useCallback((panX: number, panY: number, zoom: number) => {
-    // The video mixer container: aspect-ratio 3:1, width = min(100vw, 100vh * 3)
-    const containerW = Math.min(window.innerWidth, window.innerHeight * 3);
-    const containerH = containerW / 3;
+  // Refs for long-press / drag state
+  const isDraggingRef = useRef(false);
+  const longPressTimerRef = useRef<number>(0);
+  const startPosRef = useRef({ x: 0, y: 0 });
 
-    // With object-fit:cover, the video fills the container at zoom=1.
-    // At zoom Z, the scaled element is Z times larger than the container.
-    // Max pan (in local/pre-scale coords) = container * (Z - 1) / (2 * Z)
-    // This ensures the element edges never enter the visible container area.
-    const maxPanX = containerW * (zoom - 1) / (2 * zoom);
-    const maxPanY = containerH * (zoom - 1) / (2 * zoom);
+  // Snapshot swinging.enabled into a ref so the native listener closure stays current
+  const swingingEnabledRef = useRef(miniState.swinging.enabled);
+  swingingEnabledRef.current = miniState.swinging.enabled;
 
-    return {
-      x: Math.max(-maxPanX, Math.min(maxPanX, panX)),
-      y: Math.max(-maxPanY, Math.min(maxPanY, panY)),
+  // --- Long-press detection via native pointer events ---
+  // Must use native listeners because @use-gesture's onDragStart only fires
+  // on first MOVEMENT, not on touch-down. We need the timer to start on touch-down.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || !isEditTarget) return;
+
+    const handlePointerDown = (e: PointerEvent) => {
+      startPosRef.current = { x: e.clientX, y: e.clientY };
+      isDraggingRef.current = false;
+
+      longPressTimerRef.current = window.setTimeout(() => {
+        isDraggingRef.current = true;
+        // Cancel swinging so position becomes manual
+        if (swingingEnabledRef.current) {
+          dispatch({
+            type: 'UPDATE_MINI_SWINGING',
+            miniIndex,
+            swinging: { enabled: false },
+          });
+        }
+      }, GESTURE_CONFIG.longPressDelay);
     };
-  }, []);
 
+    const handlePointerMove = (e: PointerEvent) => {
+      // If finger moves too much before timer fires, cancel long-press
+      if (!isDraggingRef.current) {
+        const dx = e.clientX - startPosRef.current.x;
+        const dy = e.clientY - startPosRef.current.y;
+        if (Math.abs(dx) > GESTURE_CONFIG.longPressTolerance || Math.abs(dy) > GESTURE_CONFIG.longPressTolerance) {
+          clearTimeout(longPressTimerRef.current);
+        }
+      }
+    };
+
+    const handlePointerUp = () => {
+      clearTimeout(longPressTimerRef.current);
+    };
+
+    el.addEventListener('pointerdown', handlePointerDown);
+    el.addEventListener('pointermove', handlePointerMove);
+    el.addEventListener('pointerup', handlePointerUp);
+    el.addEventListener('pointercancel', handlePointerUp);
+
+    return () => {
+      el.removeEventListener('pointerdown', handlePointerDown);
+      el.removeEventListener('pointermove', handlePointerMove);
+      el.removeEventListener('pointerup', handlePointerUp);
+      el.removeEventListener('pointercancel', handlePointerUp);
+      clearTimeout(longPressTimerRef.current);
+    };
+  }, [isEditTarget, containerRef, miniIndex, dispatch]);
+
+  // --- Gesture handler for drag (position adjustment) and swipe (toggle swing) ---
   const bind = useGesture(
     {
-      onPinch: ({ offset: [scale] }) => {
-        if (!state.editMode.active || state.editMode.targetMini !== miniIndex) return;
-        const newZoom = Math.max(minZoom, Math.min(maxZoom, scale));
-        dispatch({ type: 'SET_MINI_ZOOM', miniIndex, zoom: newZoom });
-        // Re-clamp pan at new zoom level (zoom out may tighten limits)
-        const clamped = clampPan(miniState.panX, miniState.panY, newZoom);
-        dispatch({ type: 'SET_MINI_PAN', miniIndex, panX: clamped.x, panY: clamped.y });
+      onPinch: () => {
+        // FROZEN: per-video pinch-to-zoom disabled
+        return;
       },
-      onDrag: ({ delta: [dx, dy], pinching }) => {
-        if (!state.editMode.active || state.editMode.targetMini !== miniIndex) return;
-        if (pinching || miniState.zoom <= 1) return;
-        // Divide by zoom so finger movement maps 1:1 to screen movement
-        const newPanX = miniState.panX + dx / miniState.zoom;
-        const newPanY = miniState.panY + dy / miniState.zoom;
-        const clamped = clampPan(newPanX, newPanY, miniState.zoom);
-        dispatch({ type: 'SET_MINI_PAN', miniIndex, panX: clamped.x, panY: clamped.y });
+      onDrag: ({ delta: [dx], last, velocity: [vx], movement: [mx, my] }) => {
+        if (!isEditTarget) return;
+
+        // Drag mode: long-press was detected, adjust object-position
+        if (isDraggingRef.current && !last) {
+          const containerWidth = Math.min(window.innerWidth, window.innerHeight * 3);
+          const deltaPosition = -dx / containerWidth * GESTURE_CONFIG.dragSensitivity;
+          const newPosition = Math.max(0, Math.min(1, miniState.swinging.position + deltaPosition));
+          dispatch({
+            type: 'UPDATE_MINI_SWINGING',
+            miniIndex,
+            swinging: { position: newPosition },
+          });
+          return;
+        }
+
+        if (last) {
+          clearTimeout(longPressTimerRef.current);
+
+          if (isDraggingRef.current) {
+            // Was dragging — position already set, clean up
+            isDraggingRef.current = false;
+            return;
+          }
+
+          // Not a drag → check for swipe to toggle swing
+          isDraggingRef.current = false;
+          const isQuickEnough = vx > GESTURE_CONFIG.swipeMinVelocity;
+          const isFarEnough = Math.abs(mx) > GESTURE_CONFIG.swipeMinDistance;
+          const isHorizontal = Math.abs(mx) > Math.abs(my);
+
+          if (isQuickEnough && isFarEnough && isHorizontal) {
+            dispatch({
+              type: 'UPDATE_MINI_SWINGING',
+              miniIndex,
+              swinging: { enabled: !miniState.swinging.enabled },
+            });
+          }
+        }
       },
     },
     {
-      pinch: {
-        scaleBounds: { min: minZoom, max: maxZoom },
-        from: () => [miniState.zoom, 0],
-      },
       drag: {
         filterTaps: true,
       },

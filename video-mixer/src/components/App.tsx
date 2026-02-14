@@ -2,6 +2,7 @@ import { useRef, useEffect } from 'react';
 import { useMixer } from '../context/MixerContext';
 import { useLandscapeLock } from '../hooks/useLandscapeLock';
 import { useCanvasZoom } from '../hooks/useCanvasZoom';
+import { useSwingAnimation } from '../hooks/useSwingAnimation';
 import { VideoMixer } from './VideoMixer';
 import { MiniControls } from './MiniControls';
 import { TapToLoad } from './TapToLoad';
@@ -20,6 +21,7 @@ export default function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const fullScreenActivatedTimeRef = useRef<number>(0);
   const { bind: canvasGestureBind } = useCanvasZoom();
+  useSwingAnimation();
 
   // Detect if device is Android
   const isAndroid = /Android/i.test(navigator.userAgent);

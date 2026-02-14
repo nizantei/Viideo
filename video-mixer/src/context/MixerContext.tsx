@@ -16,7 +16,7 @@ const initialMiniState: MiniState = {
   swinging: {
     enabled: false,
     speed: 20,
-    position: 0,
+    position: 0.5,
     isPaused: false,
   },
   blendMode: BlendMode.NORMAL,
@@ -52,6 +52,8 @@ const initialState: MixerState = {
   },
   settings: {
     isOpen: false,
+    autoSwinging: false,
+    swingDuration: 8,
   },
   isInteractionEnabled: false,
   isFullScreenMode: false,
@@ -82,7 +84,12 @@ function applyMixSnapshot(state: MixerState, snapshot: MixSnapshot): MixerState 
     canvasZoom: snapshot.canvasZoom ?? 1.0,
     canvasPanX: snapshot.canvasPanX ?? 0,
     canvasPanY: snapshot.canvasPanY ?? 0,
-    settings: { isOpen: false },
+    settings: {
+      ...state.settings,
+      isOpen: false,
+      autoSwinging: snapshot.autoSwinging ?? state.settings.autoSwinging,
+      swingDuration: snapshot.swingDuration ?? state.settings.swingDuration,
+    },
   };
 }
 
@@ -95,6 +102,8 @@ function mixerReducer(state: MixerState, action: MixerAction): MixerState {
         videoId: action.videoId,
         thumbnailUrl: action.thumbnailUrl,
         isPlaying: true,
+        // Reset swinging — auto-swing will re-enable if appropriate at load time
+        swinging: { ...initialMiniState.swinging },
       };
       return { ...state, minis: newMinis };
     }
@@ -220,7 +229,7 @@ function mixerReducer(state: MixerState, action: MixerAction): MixerState {
         swinging: {
           enabled: false,
           speed: 20,
-          position: 0,
+          position: 0.5,
           isPaused: false,
         },
       };
@@ -293,11 +302,26 @@ function mixerReducer(state: MixerState, action: MixerAction): MixerState {
     }
 
     case 'OPEN_SETTINGS': {
-      return { ...state, settings: { isOpen: true } };
+      return { ...state, settings: { ...state.settings, isOpen: true } };
     }
 
     case 'CLOSE_SETTINGS': {
-      return { ...state, settings: { isOpen: false } };
+      return { ...state, settings: { ...state.settings, isOpen: false } };
+    }
+
+    case 'TOGGLE_AUTO_SWINGING': {
+      // Only affects future video loads — doesn't touch currently playing minis
+      return {
+        ...state,
+        settings: { ...state.settings, autoSwinging: !state.settings.autoSwinging },
+      };
+    }
+
+    case 'SET_SWING_DURATION': {
+      return {
+        ...state,
+        settings: { ...state.settings, swingDuration: action.duration },
+      };
     }
 
     case 'LOAD_MIX_STATE': {
@@ -332,6 +356,8 @@ function stateToSnapshot(state: MixerState): MixSnapshot {
     canvasZoom: state.canvasZoom,
     canvasPanX: state.canvasPanX,
     canvasPanY: state.canvasPanY,
+    autoSwinging: state.settings.autoSwinging,
+    swingDuration: state.settings.swingDuration,
   };
 }
 

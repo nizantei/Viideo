@@ -37,6 +37,16 @@ export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
 
+/**
+ * Convert a swing position (0-1) to a CSS object-position value.
+ * 0 = left edge of video aligned with left edge of container
+ * 1 = right edge of video aligned with right edge of container
+ * CSS object-position with cover guarantees no black gaps.
+ */
+export function swingPositionToObjectPosition(position: number): string {
+  return `${position * 100}% center`;
+}
+
 export function buildTransformString(
   zoom: number,
   panX: number,

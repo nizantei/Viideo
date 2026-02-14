@@ -36,6 +36,8 @@ export function SettingsPanel() {
       canvasZoom: state.canvasZoom,
       canvasPanX: state.canvasPanX,
       canvasPanY: state.canvasPanY,
+      autoSwinging: state.settings.autoSwinging,
+      swingDuration: state.settings.swingDuration,
     };
 
     const json = JSON.stringify(snapshot, null, 2);
@@ -96,6 +98,17 @@ export function SettingsPanel() {
     e.target.value = '';
   }, [dispatch]);
 
+  const handleToggleAutoSwinging = useCallback((e: React.TouchEvent | React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    dispatch({ type: 'TOGGLE_AUTO_SWINGING' });
+  }, [dispatch]);
+
+  const handleSwingDurationChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    dispatch({ type: 'SET_SWING_DURATION', duration: parseFloat(e.target.value) });
+  }, [dispatch]);
+
   // --- Now safe to do conditional render ---
   if (!state.settings.isOpen) return null;
 
@@ -149,6 +162,35 @@ export function SettingsPanel() {
             </div>
             <div style={{ fontSize: '9px', color: '#666', marginTop: 4 }}>
               Edit blend-modes.json to change
+            </div>
+          </div>
+
+          <div className={styles.divider} />
+
+          {/* --- Swinging Section --- */}
+          <div className={styles.section}>
+            <div className={styles.sectionTitle}>Swinging</div>
+            <div className={styles.row}>
+              <span className={styles.label}>Auto-Swinging</span>
+              <button
+                className={`${styles.toggleSwitch} ${state.settings.autoSwinging ? styles.on : ''}`}
+                onTouchEnd={handleToggleAutoSwinging}
+                onClick={handleToggleAutoSwinging}
+              />
+            </div>
+            <div className={styles.row}>
+              <span className={styles.label}>Speed</span>
+              <input
+                type="range"
+                className={styles.slider}
+                min="2"
+                max="20"
+                step="0.5"
+                value={state.settings.swingDuration}
+                onChange={handleSwingDurationChange}
+                onTouchStart={(e) => e.stopPropagation()}
+              />
+              <span className={styles.value}>{state.settings.swingDuration}s</span>
             </div>
           </div>
 
